@@ -1,0 +1,12 @@
+.nav-bar-one {
+    height: 3rem;
+    background: lightskyblue;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.nav-bar-one span {
+    margin-left: 2rem;
+    margin-right: 1rem;
+}
