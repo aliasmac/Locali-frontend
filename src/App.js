@@ -14,21 +14,12 @@ class App extends Component {
 
   state = {
     username: null,
-    renderSignUp: false,
-    renderLogin: false
+    renderMap: false
   }
 
-  setSignUp = () => {
+  renderMapInDashboard = () => {
     this.setState({
-      renderSignUp: true,
-      renderLogin: false
-    })
-  }
-
-  setLogin = () => {
-    this.setState({
-      renderLogin: true,
-      renderSignUp: false
+      renderMap: true
     })
   }
 
@@ -52,7 +43,7 @@ class App extends Component {
   logout = () => {
     localStorage.removeItem('token')
     this.setState({ username: null })
-    this.props.history.push('/signin')
+    this.props.history.push('/')
   }
 
   componentDidMount() {
@@ -68,63 +59,45 @@ class App extends Component {
 
 
   render() {
-
-    const {renderSignUp, renderLogin, username} = this.state
+    console.log("Hello from start of render in APP.js", this.state.username)
+    
+    const {username, renderMap} = this.state
 
     return (
       <div>
           <Route path='/' render={(routerProps) => 
             <div>
               <NavBar {...routerProps} 
-                user={this.state.user}
-                setSignUp={this.setSignUp}
-                setLogin={this.setLogin}
+                username={this.state.username}
+                logout={this.logout}
               /> 
-              <LandingPage />
             </div>
           } />
-
-
+        {/* BODY PAGES */}
         {
-          username && 
-          <Route path='/dashboard' render={(routerProps) => <DashBoard /> } />
-        }  
-
-        {
-          !username &&
-          <Switch>
-            {
-              renderSignUp && 
-              <SignUpForm
+          !username ?
+          <div>
+              {/* <Route path='/dashboard' render={(routerProps) => <DashBoard /> } /> */}
+              <Route path='/signup' render={(routerProps) => <SignUpForm
                 login={this.login}
                 history={this.props.history}
-              /> || renderLogin && 
-              <LoginForm
-                login={this.login}
-                history={this.props.history}
-              />
-            }
-          </Switch>
-        }
-
-
-        {/* {
-          renderSignUp && 
-                      <SignUpForm
-                        login={this.login}
-                        history={this.props.history}
-                      />
-                    
-        }
-
-        {
-          renderLogin && 
-                      <LoginForm
-                        login={this.login}
-                        history={this.props.history}
-                      />
-        } */}
-      
+                /> } />
+              <Route path='/login' render={(routerProps) => <LoginForm
+              login={this.login}
+              history={this.props.history}
+              /> } />
+          </div>      
+          :
+          // Add container here
+          <Route path='/dashboard' render={(routerProps) =>
+                <DashBoard
+                  username={username}
+                  renderMap={renderMap}
+                  renderMapInDashboard={this.renderMapInDashboard}
+                />
+              } />
+          
+        }        
         
       </div>
     )

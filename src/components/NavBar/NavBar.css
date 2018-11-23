@@ -1,4 +1,4 @@
-.nav-bar-one {
+.nav-bar-one, .nav-bar-two {
     height: 3rem;
     background: lightskyblue;
     display: flex;
@@ -6,7 +6,14 @@
     align-items: center;
 }
 
-.nav-bar-one span {
+.nav-link {
+    text-decoration: none;
     margin-left: 2rem;
     margin-right: 1rem;
 }
+
+.nav-link:hover {
+    background: red;
+    color: azure;
+}
+
