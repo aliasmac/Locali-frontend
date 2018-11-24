@@ -45,14 +45,15 @@ class API {
 
   
     static getUserBroadcasts () {
-      return fetch('http://localhost:3001/items', {
+      return fetch('http://localhost:3000/items', {
         headers: { 'Authorization': localStorage.token }
       }).then(resp => resp.json())
     }
 
 
-    static newBroadcast (broadcast) {
-      return fetch('http://localhost:3001/api/v1/broadcasts', {
+    static newBroadCast (broadcast) {
+      console.log(broadcast)
+      return fetch('http://localhost:3000/api/v1/broadcasts', {
         method: 'POST', 
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

@@ -1,10 +1,11 @@
-import React from 'react';
+import React from 'react';  
 
 import './Modal.css';
 
 const Modal = (props) => {
 
-    console.log("HELLO FROM INSIDE MODAL")
+
+    const {showMessageModal, showBroadcastModal, close, handleMessageSubmit, handleBroadcastSubmit, children} = props
 
     return (
 
@@ -12,35 +13,35 @@ const Modal = (props) => {
             <div className="modal-wrapper"
 
                 style={{
-                    transform: props.show ? 'translateY(-70vh)' : 'translateY(-100vh)',
-                    opacity: props.show ? '1' : '0'
+                    transform: showMessageModal || showBroadcastModal ? 'translateY(-70vh)' : 'translateY(-100vh)',
+                    opacity: showMessageModal || showBroadcastModal ? '1' : '0'
                 }}>
 
                 {
-                    props.showMessageModal ?
+                    showMessageModal ?
                     <div>
                         <div className="modal-header">
                             <h3>Create new message</h3>
-                            <span className="close-modal-btn" onClick={props.close}>×</span>
+                            <span className="close-modal-btn" onClick={close}>×</span>
                         </div>
                         <div className="modal-body">
-                                {props.children}
+                                {children}
                         </div>
                         <div className="modal-footer">
-                            <button onClick={props.handleMessageSubmit} className="btn-continue">Submit</button>
+                            <button onClick={handleMessageSubmit} className="btn-continue">Submit</button>
                         </div>
                     </div>
                     :
                     <div>
                         <div className="modal-header">
                         <h3>Create new broadcast</h3>
-                        <span className="close-modal-btn" onClick={props.close}>×</span>
+                        <span className="close-modal-btn" onClick={close}>×</span>
                         </div>
                         <div className="modal-body">
-                                {props.children}
+                                {children}
                         </div>
                         <div className="modal-footer">
-                            <button onClick={props.handleBroadcastSubmit} className="btn-continue">Submit</button>
+                            <button onClick={handleBroadcastSubmit} className="btn-continue">Submit</button>
                         </div>
                     </div>
                 }

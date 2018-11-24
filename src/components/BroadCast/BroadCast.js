@@ -2,14 +2,14 @@ import React from 'react';
 
 import MessageCard from './MessageCard/MessageCard'
 
-const BroadCast = (props) => {
+const BroadCast = ({newBroadCastMessages, saveBroadcast}) => {
     return (
         <div className="broadcast-section">
             {
-                props.broadcast.map((msg, idx) =>  <MessageCard key={idx} message={msg} /> )
+                newBroadCastMessages.map((msg, idx) =>  <MessageCard key={idx} message={msg} /> )
             }
 
-            <button onClick={props.saveBroadcast}>Save Broadcast</button>    
+            <button onClick={saveBroadcast}>Save Broadcast</button>    
         </div>
     )
 }

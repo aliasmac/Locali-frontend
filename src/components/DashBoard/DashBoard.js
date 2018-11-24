@@ -29,13 +29,19 @@ class DashBoard extends React.Component {
             showModal: false,
             showBroadcastModal: false,
             messageText: "",
-            broadcast: [],
-            broadcastName: "", 
-            pin: ""
+            // broadcast: [],
+            // pin: "",
+            // newBroadcastObject: {
+            //     name: "",
+            //     pin: null,
+            //     broadcaster_id: null,
+            //     messages: []
+            // }
+            newBroadCastName: "",
+            newBroadCastPin: undefined,
+            newBroadCastMessages: []
           };
-
     }
-
 
     createNewBroadcast = () => {
         this.setState({ showBroadcastModal: true })
@@ -44,7 +50,8 @@ class DashBoard extends React.Component {
   
 	closeModalHandler = () => {
 		this.setState({
-			showModal: false
+            showModal: false,
+            showBroadcastModal: false
 		});
     }
 
@@ -62,6 +69,26 @@ class DashBoard extends React.Component {
         this.setState({ [e.target.name]: e.target.value })
     }
 
+
+
+    handleBroadcastSubmit = () => {
+ 
+    const broadcast = {
+                name: this.state.newBroadCastName,
+                pin: this.state.newBroadCastPin,
+                broadcaster_id: this.props.user.id
+            }
+        
+
+        API.newBroadCast(broadcast)
+            
+        this.setState({
+            // renders map component and broadcast RHS column
+            renderMap: true,
+            showBroadcastModal: false
+        })
+    }
+
     handleMessageSubmit = e => {
         // messageWithPolygon
         const encodedFence = google.maps.geometry.encoding.encodePath(this.state.fence);
@@ -69,7 +96,8 @@ class DashBoard extends React.Component {
             message: this.state.messageText,
             geoFence: encodedFence
         }
-        const newBroadcastMessages = [...this.state.broadcast, broadcastMessage]
+        const newBroadcastMessages = [...this.state.newBroadCastMessages, broadcastMessage]
+
         this.setState({
             messageText: "",
             fence: null,
@@ -78,30 +106,11 @@ class DashBoard extends React.Component {
         })
     }
 
-    handleBroadcastSubmit = () => {
-
-        const broadcast = {
-            name: this.state.broadcastName,
-            pin: this.state.pin,
-            broadcaster_id: this.props.user.id
-        }
-
-        API.newBroadcast(broadcast)
-            
-
-        this.setState({
-            renderMap: true,
-            broadcastName: "", 
-            pin: null
-        })
-    }
-
-
     render () {
         const {user} = this.props
         const {renderMap} = this.state
   
-        console.log("INSIDE DASHBOARD", user)
+    
 
 
         return (
@@ -147,19 +156,34 @@ class DashBoard extends React.Component {
                         handleBroadcastSubmit={this.handleBroadcastSubmit}
                     >
 
-                      
+                        {
+                            this.state.showModal &&
+                            <form id="message-form">
+                                <div>
+                                    <textarea
+                                        name="message"
+                                        form="message-form"
+                                        onChange={this.handleChange}
+                                        required 
+                                        value={this.state.messageText}
+                                    >
+                                    Enter your message here
+                                    </textarea>
+                                </div>
+                            </form>
+                        }
 
 
                         {
-                            this.state.showBroadcastModal ?
+                            this.state.showBroadcastModal &&
                             <form id="broadcast-form">
                                 <div>
                                     <label>Name your broadcast</label>
                                     <input
                                         form="broadcast-form"
-                                        name="broadcastName"
+                                        name="newBroadCastName"
                                         type="text"
-                                        value={this.state.broadcastName}
+                                        value={this.state.newBroadCastName}
                                         onChange={this.handleChange}
                                         required 
                                     />
@@ -168,27 +192,14 @@ class DashBoard extends React.Component {
                                     <label>Give your broadcast a 4 digit PIN</label>
                                     <input
                                         form="broadcast-form"
-                                        name="pin"
+                                        name="newBroadCastPin"
                                         type="number"
-                                        value={this.state.pin}
+                                        value={this.state.newBroadCastPin}
                                         onChange={this.handleChange}
                                         required 
                                     />
                                 </div>
-                            </form> :
-                            <form id="message-form">
-                            <div>
-                                <textarea
-                                    name="message"
-                                    form="message-form"
-                                    onChange={this.handleChange}
-                                    required 
-                                    value={this.state.messageText}
-                                >
-                                Enter your message here
-                                </textarea>
-                            </div>
-                        </form>
+                            </form>
                         }
                             
                         
@@ -203,7 +214,7 @@ class DashBoard extends React.Component {
                     <div>
                         <h1>Your Broadcasts</h1>
                         <BroadCast
-                            broadcast={this.state.broadcast}
+                            newBroadCastMessages={this.state.newBroadCastMessages}
                             saveBroadcast={this.saveBroadcast}
                         />
                     </div>
