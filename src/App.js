@@ -13,15 +13,15 @@ import LandingPage from './components/LandingPage/LandingPage'
 class App extends Component {
 
   state = {
-    username: null,
+    user: null,
     renderMap: false
   }
 
-  renderMapInDashboard = () => {
-    this.setState({
-      renderMap: true
-    })
-  }
+  // renderMapInDashboard = () => {
+  //   this.setState({
+  //     renderMap: true
+  //   })
+  // }
 
   
   setUser = user => {
@@ -36,13 +36,13 @@ class App extends Component {
   login = (user) => {
     console.log("Hello from inside login in App.js", user)
     localStorage.setItem('token', user.token)
-    this.setState({ username: user.username })
+    this.setState({ user: user })
     this.props.history.push('/dashboard')
   }
 
   logout = () => {
     localStorage.removeItem('token')
-    this.setState({ username: null })
+    this.setState({ user: null })
     this.props.history.push('/')
   }
 
@@ -59,23 +59,23 @@ class App extends Component {
 
 
   render() {
-    console.log("Hello from start of render in APP.js", this.state.username)
+    console.log("Hello from start of render in APP.js", this.state.user)
     
-    const {username, renderMap} = this.state
+    const {user, renderMap} = this.state
 
     return (
       <div>
           <Route path='/' render={(routerProps) => 
             <div>
               <NavBar {...routerProps} 
-                username={this.state.username}
+                user={this.state.user}
                 logout={this.logout}
               /> 
             </div>
           } />
         {/* BODY PAGES */}
         {
-          !username ?
+          !user ?
           <div>
               {/* <Route path='/dashboard' render={(routerProps) => <DashBoard /> } /> */}
               <Route path='/signup' render={(routerProps) => <SignUpForm
@@ -91,7 +91,7 @@ class App extends Component {
           // Add container here
           <Route path='/dashboard' render={(routerProps) =>
                 <DashBoard
-                  username={username}
+                  user={user}
                   renderMap={renderMap}
                   renderMapInDashboard={this.renderMapInDashboard}
                 />

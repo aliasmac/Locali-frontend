@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import './NavBar.css'
 
 
-const NavBar = ({username, logout}) => {
+const NavBar = ({user, logout}) => {
 
     return (
     
@@ -12,7 +12,7 @@ const NavBar = ({username, logout}) => {
             
             <nav >
                 {
-                    username ?
+                    user ?
                     <div className="nav-bar-one">
                         <NavLink to='/' className={'nav-link'}>
                             Home

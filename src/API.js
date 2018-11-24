@@ -8,7 +8,6 @@ class API {
       this.broadcastsUrl = this.baseUrl + '/api/v1/broadcasts'
     }
 
-    
 
     static signup (username, password) {
         return fetch('http://localhost:3000/api/v1/users', {
@@ -20,8 +19,8 @@ class API {
           })
         }).then(resp => resp.json())
     }
-    
 
+    
     static login (obj) {
     console.log("HELLO FROM LOGIN IN API.js", obj)
       return fetch('http://localhost:3000/api/v1/login', {
@@ -43,14 +42,36 @@ class API {
         headers: {'Authorization': token}
       }).then(resp => resp.json())
     }
+
   
     static getUserBroadcasts () {
       return fetch('http://localhost:3001/items', {
         headers: { 'Authorization': localStorage.token }
       }).then(resp => resp.json())
     }
+
+
+    static newBroadcast (broadcast) {
+      return fetch('http://localhost:3001/api/v1/broadcasts', {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: broadcast.name,
+          pin: broadcast.pin,
+          broadcaster_id: broadcast.broadcaster_id
+        })
+      })
+    }
+
+    
+
+
   }
   
   
   export default API
 
+
+
+
+  

@@ -1,4 +1,15 @@
+.dashboard {
+    display: flex;
+    background: purple;
+}
+
+.map-section {
+    background: pink;
+}
+
+
 .map-container {
     height: 400px;
     max-width: 70%;
 }
+
