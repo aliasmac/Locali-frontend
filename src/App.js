@@ -14,16 +14,11 @@ class App extends Component {
 
   state = {
     user: null,
-    renderMap: false
+    renderMap: false,
+    userObject: null
   }
 
-  // renderMapInDashboard = () => {
-  //   this.setState({
-  //     renderMap: true
-  //   })
-  // }
-
-  
+ 
   setUser = user => {
     this.setState({
       user,
@@ -34,9 +29,13 @@ class App extends Component {
 
 
   login = (user) => {
-    console.log("Hello from inside login in App.js", user)
+    console.log("Hello from inside login in App.js", user.id)
     localStorage.setItem('token', user.token)
     this.setState({ user: user })
+    API.getUserObj(this.state.user.id)
+      .then(user => {
+        this.setState({ userObject: user })
+      })
     this.props.history.push('/dashboard')
   }
 
@@ -52,16 +51,15 @@ class App extends Component {
       .then(user => {
         console.log(user)
         this.login(user)
-        // this.props.history.push('/dashboard')
       })
       .catch(error => this.props.history.push('/'))
   }
 
 
   render() {
-    console.log("Hello from start of render in APP.js", this.state.user)
+    console.log("Hello from start of render in APP.js", this.state.userObject)
     
-    const {user, renderMap} = this.state
+    const {user, renderMap, userObject} = this.state
 
     return (
       <div>
@@ -92,8 +90,7 @@ class App extends Component {
           <Route path='/dashboard' render={(routerProps) =>
                 <DashBoard
                   user={user}
-                  renderMap={renderMap}
-                  renderMapInDashboard={this.renderMapInDashboard}
+                  userObject={userObject}
                 />
               } />
           

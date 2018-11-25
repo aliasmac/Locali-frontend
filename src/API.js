@@ -43,6 +43,11 @@ class API {
       }).then(resp => resp.json())
     }
 
+    static getUserObj (id) {
+      return fetch(`http://localhost:3000/api/v1/users/${id}`)
+        .then(resp => resp.json())
+    }
+
   
     static getUserBroadcasts () {
       return fetch('http://localhost:3000/items', {
@@ -61,10 +66,35 @@ class API {
           pin: broadcast.pin,
           broadcaster_id: broadcast.broadcaster_id
         })
+      }).then(resp => resp.json())
+    }
+
+    static addMessage (messageObj) {
+      return fetch('http://localhost:3000/api/v1/messages', {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          content: messageObj.message,
+          geofence: messageObj.geofence,
+          broadcast_id: messageObj.broadcast_id
+        })
+      }).then(resp => resp.json())
+    }
+
+    static saveBroadCast (id) {
+      return fetch(`http://localhost:3000/api/v1/broadcasts/${id}`, {
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          saved: true,
+        })
       })
     }
 
-    
+    static getLastbroadcast () {
+      return fetch(`http://localhost:3000/api/v1/lastbroadcast`)
+        .then(resp => resp.json())
+    }
 
 
   }

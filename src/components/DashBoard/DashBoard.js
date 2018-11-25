@@ -29,18 +29,28 @@ class DashBoard extends React.Component {
             showModal: false,
             showBroadcastModal: false,
             messageText: "",
-            // broadcast: [],
-            // pin: "",
-            // newBroadcastObject: {
-            //     name: "",
-            //     pin: null,
-            //     broadcaster_id: null,
-            //     messages: []
-            // }
             newBroadCastName: "",
-            newBroadCastPin: undefined,
-            newBroadCastMessages: []
+            newBroadCastPin: "",
+            newBroadCastMessages: [],
+            currentBroadcast: null,
+            getLastBroadCast: false
           };
+    }
+
+    componentDidMount() {
+
+        API.getLastbroadcast()
+            .then(broadcast => {
+                if (broadcast) {
+                    if (broadcast.saved === false ) {
+                        this.setState({ currentBroadcast: broadcast })
+                    } else {
+                        this.setState({ currentBroadcast: null })
+                    }
+                }
+                           
+            }) 
+
     }
 
     createNewBroadcast = () => {
@@ -69,8 +79,6 @@ class DashBoard extends React.Component {
         this.setState({ [e.target.name]: e.target.value })
     }
 
-
-
     handleBroadcastSubmit = () => {
  
     const broadcast = {
@@ -78,15 +86,19 @@ class DashBoard extends React.Component {
                 pin: this.state.newBroadCastPin,
                 broadcaster_id: this.props.user.id
             }
-        
 
         API.newBroadCast(broadcast)
+            .then(broadcast => {
+                this.setState({
+                    // renders map component and broadcast RHS column
+                    renderMap: true,
+                    showBroadcastModal: false,
+                    currentBroadcast: broadcast
+                }) 
+            })
+
+         
             
-        this.setState({
-            // renders map component and broadcast RHS column
-            renderMap: true,
-            showBroadcastModal: false
-        })
     }
 
     handleMessageSubmit = e => {
@@ -94,43 +106,51 @@ class DashBoard extends React.Component {
         const encodedFence = google.maps.geometry.encoding.encodePath(this.state.fence);
         const broadcastMessage = {
             message: this.state.messageText,
-            geoFence: encodedFence
+            geofence: encodedFence,
+            broadcast_id: this.state.currentBroadcast.id
         }
-        const newBroadcastMessages = [...this.state.newBroadCastMessages, broadcastMessage]
+
+        API.addMessage(broadcastMessage)
 
         this.setState({
             messageText: "",
             fence: null,
-            broadcast: newBroadcastMessages,
             showModal: false,
         })
     }
 
+    saveBroadcast = () => {
+        API.saveBroadCast(this.state.currentBroadcast.id)
+            .then(this.setState({ currentBroadcast: null }))
+    }
+
     render () {
-        const {user} = this.props
-        const {renderMap} = this.state
-  
-    
+
+        const {user, userObject} = this.props
+        const {currentBroadcast, renderMap, showModal, newBroadCastPin, showBroadcastModal, center, content, messageText, newBroadCastMessages, newBroadCastName} = this.state
 
 
         return (
             <div className="dashboard"> 
                 <div className="map-section">
 
-                    { this.state.showModal || this.state.showBroadcastModal ? <div onClick={this.closeModalHandler} className="back-drop"></div> : null }
+                    { showModal || showBroadcastModal ? <div onClick={this.closeModalHandler} className="back-drop"></div> : null }
 
                     <h1>Hi {user.username}, welcome to your dashboard</h1>
+
                     <h3>Instructions:</h3>
                     <p> 1. Click 'Start' to begin a new broadcast</p>
                     <p> 2. Select a location from the map below</p>
                     <p> 3. Add a message</p>
                     <p> 4. Save it to your broadcast</p>
 
-                    <button onClick={() => this.createNewBroadcast()}>Create new Broadcast</button>
+                    <button onClick={() => this.createNewBroadcast()}
+                    disabled={currentBroadcast}
+                    >Create new Broadcast</button>
 
                     {
-                        renderMap && 
-                            <div>
+                        currentBroadcast && 
+                        <div>
                             <p>
                             {/* Last fetched: <Moment interval={10000} fromNow>{this.state.lastFetched}</Moment> */}
                             </p>
@@ -139,8 +159,8 @@ class DashBoard extends React.Component {
                                 loadingElement={    <div style={{ height: `100%` }}/>   }
                                 containerElement={  <div className="map-container" />  }
                                 mapElement={    <div style={{ height: `100%` }} />  }
-                                center={this.state.center}
-                                content={this.state.content}
+                                center={center}
+                                content={content}
                                 doneDrawing={this.doneDrawing}
                             />
                         </div>
@@ -149,23 +169,23 @@ class DashBoard extends React.Component {
                     
                     <Modal
                         className="modal"
-                        showMessageModal={this.state.showModal}
-                        showBroadcastModal={this.state.showBroadcastModal}
+                        showMessageModal={showModal}
+                        showBroadcastModal={showBroadcastModal}
                         close={this.closeModalHandler}
                         handleMessageSubmit={this.handleMessageSubmit}
                         handleBroadcastSubmit={this.handleBroadcastSubmit}
                     >
 
                         {
-                            this.state.showModal &&
+                            showModal &&
                             <form id="message-form">
                                 <div>
                                     <textarea
-                                        name="message"
+                                        name="messageText"
                                         form="message-form"
                                         onChange={this.handleChange}
                                         required 
-                                        value={this.state.messageText}
+                                        value={messageText}
                                     >
                                     Enter your message here
                                     </textarea>
@@ -175,7 +195,7 @@ class DashBoard extends React.Component {
 
 
                         {
-                            this.state.showBroadcastModal &&
+                            showBroadcastModal &&
                             <form id="broadcast-form">
                                 <div>
                                     <label>Name your broadcast</label>
@@ -183,7 +203,7 @@ class DashBoard extends React.Component {
                                         form="broadcast-form"
                                         name="newBroadCastName"
                                         type="text"
-                                        value={this.state.newBroadCastName}
+                                        value={newBroadCastName}
                                         onChange={this.handleChange}
                                         required 
                                     />
@@ -194,30 +214,25 @@ class DashBoard extends React.Component {
                                         form="broadcast-form"
                                         name="newBroadCastPin"
                                         type="number"
-                                        value={this.state.newBroadCastPin}
+                                        value={newBroadCastPin}
                                         onChange={this.handleChange}
                                         required 
                                     />
                                 </div>
                             </form>
                         }
-                            
-                        
-
-                        
+                                       
 				    </Modal>
 
                 </div>
 
                 {
-                    renderMap && 
-                    <div>
-                        <h1>Your Broadcasts</h1>
+                    currentBroadcast && 
                         <BroadCast
-                            newBroadCastMessages={this.state.newBroadCastMessages}
+                            newBroadCastMessages={newBroadCastMessages}
                             saveBroadcast={this.saveBroadcast}
+                            currentBroadcast={currentBroadcast}
                         />
-                    </div>
                 }
                 
               
