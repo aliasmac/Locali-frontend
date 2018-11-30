@@ -1,15 +1,52 @@
-.dashboard {
+.main-container {
     display: flex;
-    background: purple;
+    justify-content: space-around;
 }
 
 .map-section {
-    background: pink;
+    width: 70%; 
+    display: flex;
+    flex-direction: column;
 }
 
+/* .map-container-parent {
+
+} */
+
+.create-new-broadcast {
+    width: 10rem;
+    display: block;
+    padding: 1rem;
+    color: #4c75c2;  
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    margin: 17rem auto 0 auto;
+    cursor: pointer;
+    border: 0;
+    border-radius: 5px;
+    background: #030056; 
+    outline: 0;
+    text-transform: uppercase;
+}
+
+.create-new-broadcast::hover {
+    background: #100c88; 
+    color: azure;
+  }
+
+.create-new-broadcast-hide {
+    display: none;
+}
 
 .map-container {
-    height: 400px;
-    max-width: 70%;
+    height: 400px; 
+    max-width: 80%;
+    margin-top: 3rem;
+    margin: 7rem auto 0 auto;
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
 
+
+  

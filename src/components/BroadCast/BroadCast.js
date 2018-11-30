@@ -1,8 +1,9 @@
 import React from 'react';
+import './BroadCast.css'
 
 import MessageCard from './MessageCard/MessageCard'
 
-const BroadCast = ({newBroadCastMessages, saveBroadcast, userObject, currentBroadcast}) => {
+const BroadCast = ({ renderEditedMessages, newBroadCastMessages,saveBroadcast, userObject, currentBroadcast, cancelBroadcast, renderNewMessages, removeMessage, editMessage}) => {
 
     console.log("Hello from broadcast", userObject)
 
@@ -14,15 +15,56 @@ const BroadCast = ({newBroadCastMessages, saveBroadcast, userObject, currentBroa
         <div className="broadcast-section">
 
             {
-                currentBroadcast &&    
+                currentBroadcast && renderNewMessages ?
                 <div> 
                     <h1>{currentBroadcast.name}</h1>
-                    <div>
-                        { currentBroadcast.messages.map((msg, idx) =>  <MessageCard key={idx} message={msg} />) }
+                    <div className="broadcast-messages">
+                        { newBroadCastMessages.map((msg, idx) =>  <MessageCard num={idx + 1} 
+                                                                        key={idx}
+                                                                        message={msg}
+                                                                        removeMessage={removeMessage}
+                                                                        editMessage={editMessage}
+                                                                    />) }
                     </div>            
-                </div>
+                </div> : null
+                
             }
-            <button onClick={saveBroadcast}>Save Broadcast</button>    
+
+            {
+                currentBroadcast && renderEditedMessages ?
+                <div> 
+                    <h1>{currentBroadcast.name}</h1>
+                    <div className="broadcast-messages">
+                        { newBroadCastMessages.map((msg, idx) =>  <MessageCard num={idx + 1} 
+                                                                            key={idx} message={msg}
+                                                                            removeMessage={removeMessage}
+                                                                            editMessage={editMessage}
+                                                                            />) }
+                    </div>            
+                </div> : null
+            }
+
+            {
+                currentBroadcast && !renderNewMessages && !renderEditedMessages ?
+                <div> 
+                <h1>{currentBroadcast.name}</h1>
+                    <div className="broadcast-messages">
+                        { currentBroadcast.messages.map((msg, idx) =>  <MessageCard num={idx + 1} 
+                                                                            key={idx} message={msg}
+                                                                            removeMessage={removeMessage}
+                                                                            editMessage={editMessage}
+                                                                            />) }
+                    </div>            
+                </div> : null
+            }
+
+            
+
+
+            <div className="broadcast-buttons" >
+                <button onClick={saveBroadcast}>Save Broadcast</button>    
+                <button onClick={cancelBroadcast} >Cancel</button>
+            </div>
         </div>
     )
 }

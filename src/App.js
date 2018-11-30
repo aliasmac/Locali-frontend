@@ -36,7 +36,7 @@ class App extends Component {
       .then(user => {
         this.setState({ userObject: user })
       })
-    this.props.history.push('/dashboard')
+    this.props.history.push('/create-broadcast')
   }
 
   logout = () => {
@@ -62,19 +62,21 @@ class App extends Component {
     const {user, renderMap, userObject} = this.state
 
     return (
-      <div>
+      <div className="main">
           <Route path='/' render={(routerProps) => 
+          <>
             <div>
               <NavBar {...routerProps} 
                 user={this.state.user}
                 logout={this.logout}
               /> 
             </div>
+          </>  
           } />
         {/* BODY PAGES */}
         {
           !user ?
-          <div>
+          <>
               {/* <Route path='/dashboard' render={(routerProps) => <DashBoard /> } /> */}
               <Route path='/signup' render={(routerProps) => <SignUpForm
                 login={this.login}
@@ -84,10 +86,10 @@ class App extends Component {
               login={this.login}
               history={this.props.history}
               /> } />
-          </div>      
+          </>      
           :
           // Add container here
-          <Route path='/dashboard' render={(routerProps) =>
+          <Route path='/create-broadcast' render={(routerProps) =>
                 <DashBoard
                   user={user}
                   userObject={userObject}

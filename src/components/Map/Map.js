@@ -4,7 +4,8 @@ import {
   withGoogleMap,
   GoogleMap,
   Marker,
-  withScriptjs
+  withScriptjs,
+  Polygon
 } from 'react-google-maps';
 const { DrawingManager } = require("react-google-maps/lib/components/drawing/DrawingManager");
 
@@ -12,6 +13,7 @@ const googleMapURL = `https://maps.googleapis.com/maps/api/js?libraries=geometry
 
 
 const MapWithADrawingManager = withScriptjs(withGoogleMap(props => (
+  
   <GoogleMap
     defaultZoom={15}
     center={props.center}
@@ -26,13 +28,23 @@ const MapWithADrawingManager = withScriptjs(withGoogleMap(props => (
             google.maps.drawing.OverlayType.POLYGON,
           ],
         },
+        polygonOptions: {
+          fillColor: '#4c75c2',
+          fillOpacity: 0.3,
+          strokeWeight: 2,
+          clickable: false,
+          editable: true,
+          zIndex: 1
+        }
+        ,
       }}
       onPolygonComplete={props.doneDrawing}
     />
 
-    {props.center.lat && props.center.lng && (
-      <Marker position={props.center} />
-    )}
+    {props.center.lat && props.center.lng && 
+      <Marker position={props.center} />       
+    }
+    {props.renderPolygonsOnMap()}
   </GoogleMap>
 )));
 

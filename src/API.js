@@ -97,11 +97,34 @@ class API {
         .then(resp => resp.json())
     }
 
+    static deleteBroadcast (id) {
+      return fetch(`http://localhost:3000/api/v1/broadcasts/${id}`, {
+        method: 'DELETE',
+      })
+    }
+
+    static removeMessage (id) {
+      return fetch(`http://localhost:3000/api/v1/messages/${id}`, {
+        method: 'DELETE',
+      })
+    }
+
+    static editMessage (message, id) {
+      return fetch( `http://localhost:3000/api/v1/messages/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: message
+        })
+      }).then(resp => resp.json())
+    }
 
   }
-  
+
   
   export default API
+
+ 
 
 
 

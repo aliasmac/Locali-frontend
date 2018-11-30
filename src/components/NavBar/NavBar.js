@@ -15,23 +15,31 @@ const NavBar = ({user, logout}) => {
                     user ?
                     <div className="nav-bar-one">
                         <NavLink to='/' className={'nav-link'}>
-                            Home
+                            <span>Home</span>
                         </NavLink>
 
-                        <NavLink to='/dashboard' className={'nav-link'}>
-                            Dashboard
+                        <NavLink to='/create-broadcast' className={'nav-link'}>
+                            <span>Create Broadcast</span>
                         </NavLink> 
 
-                        <span onClick={logout} className={'nav-link'}>Logout</span>
+                        <NavLink to='/history' className={'nav-link'}>
+                            <span>Broadcast History</span>
+                        </NavLink> 
+
+                        <NavLink to='/history' className={'nav-link'}>
+                            <span>Info Page</span>
+                        </NavLink> 
+
+                        <span onClick={logout} className={'nav-link logout'}>Logout</span>
 
                     </div> :
                     <div className="nav-bar-two">
                         <NavLink to='/signup' className={'nav-link'}>
-                            Sign Up
+                            <span>Sign Up</span>
                         </NavLink>
 
                         <NavLink to='/login' className={'nav-link'}>
-                            Login
+                            <span>Login</span>
                         </NavLink>            
                     </div> 
 

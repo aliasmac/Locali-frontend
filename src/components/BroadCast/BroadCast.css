@@ -1,3 +1,45 @@
-.broadcast-section{
-    background: green;
+.broadcast-section {
+    position: relative;
+    background: #4c75c2;  
+    width: 25%;
+    margin-top: 2rem;
+    height: 43rem;
 }
+
+.broadcast-section h1 {
+    text-align: center;
+}
+
+.broadcast-messages {
+    height: 35rem;
+    margin: 1rem;
+}
+
+.broadcast-buttons {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.broadcast-section button {
+    display: inline-block;
+    text-transform: uppercase;
+    outline: 0;
+    background: #030056; 
+    width: 50%;
+    border: 0;
+    padding: 15px;
+    color: #4c75c2;  
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+}
+
+
+.broadcast-section button:hover, .broadcast-section button:active, .broadcast-section button:focus {
+    background: #100c88; 
+    color: azure;
+}
+
+

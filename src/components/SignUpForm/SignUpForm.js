@@ -1,5 +1,7 @@
 import React from 'react'
+
 import API from '../../API'
+import './SignUpForm.css'
 
 class SignUpForm extends React.Component {
 
@@ -36,10 +38,13 @@ class SignUpForm extends React.Component {
     render() {
 
         return (
-            <div>
-                <h2>Sign Up</h2>
-                <form onSubmit={this.handleSubmit}>
-                    <div>
+            <div className="signup-page">
+                <div className="form" >
+                <form className="signup-form" >
+                    <h2>Sign Up</h2>
+                        <div>
+                            <label className="form-label">Username</label>
+                        </div>
                         <input
                         name="username"
                         type="text"
@@ -47,8 +52,11 @@ class SignUpForm extends React.Component {
                         onChange={this.handleChange}
                         required 
                         />
-                    </div>
-                    <div>
+                    
+                
+                        <div>
+                            <label className="form-label">Password</label>
+                        </div>
                         <input
                         name="password"
                         type="password"
@@ -56,11 +64,12 @@ class SignUpForm extends React.Component {
                         onChange={this.handleChange}
                         required 
                         />
-                    </div>
-                    <button className='main-btn'>
-                        SUBMIT
+                    
+                    <button onSubmit={this.handleSubmit} className='main-btn'>
+                        <span>SUBMIT</span>
                     </button>
-                </form>
+                </form>       
+                </div>
             </div>
         )
 
@@ -70,3 +79,6 @@ class SignUpForm extends React.Component {
 
 
 export default SignUpForm
+
+
+            

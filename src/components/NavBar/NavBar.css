@@ -1,6 +1,6 @@
 .nav-bar-one, .nav-bar-two {
-    height: 3rem;
-    background: lightskyblue;
+    height: 4rem;
+    background: #030056; 
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -10,10 +10,19 @@
     text-decoration: none;
     margin-left: 2rem;
     margin-right: 1rem;
+    padding: 0.5rem;
+    color: #4c75c2; 
+    border-radius: 3px;     
 }
+
+.nav-link.logout {
+    background: azure;
+    color: #4c75c2;
+    margin-right: 2rem;
+}
+
 
 .nav-link:hover {
-    background: red;
+    background: #100c88; 
     color: azure;
 }
-

@@ -5,19 +5,26 @@
     margin: 100px auto 0;
     transition: all .8s;
     width: 60%;
+    position: relative;
+    padding: 1rem;
+    
+}
+
+.modal-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 .modal-header {
-    background: #263238;
     height: 40px;
     line-height: 40px;
     padding: 5px 20px;
-    text-align: right;
+    text-align: center;
 }
 
 .modal-header h3 {
-    color: white;
-    float: left;
+    float: center;
     margin: 0;
     padding: 0;
 }
@@ -28,10 +35,45 @@
 }
 
 .modal-footer {
-    background: #263238;
     height: 35px;
     padding: 15px;
 }
+
+.modal-footer button {
+    position: relative;
+    bottom: 2rem;
+    float: right;
+    text-transform: uppercase;
+    outline: 0;
+    background: #030056; 
+    padding: 0.7rem;
+    border: 0;
+    color: #4c75c2;  
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+}
+
+.modal-footer button:hover, .modal-footer button:active, .modal-footer button:focus {
+    background: #100c88; 
+    color: azure;
+  }
+  
+
+.message-form textarea {
+    width: 20rem;
+    height: 5rem;
+    margin-bottom: 1rem;
+}
+
+
+.broadcast-form-el label {
+    height: 100rem;
+}
+
+
+
 
 .close-modal-btn {
     color: white;
@@ -45,7 +87,7 @@
     color: black;
 }
 
-.btn-cancel, .btn-continue {
+.btn-continue {
     background: coral;
     border: none;
     color: white;
@@ -55,15 +97,6 @@
     padding: 10px;
 }
 
-.btn-cancel {
-    background-color: #b71c1c;
-    float: left;
-}
-
-.btn-continue {
-    background-color: #1b5e20;
-    float: right;
-}
 
 .back-drop {
     background-color: rgba(48, 49, 48, 0.42);

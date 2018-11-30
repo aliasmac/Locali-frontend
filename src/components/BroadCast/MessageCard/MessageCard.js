@@ -1,9 +1,13 @@
 import React from 'react';
+import './MessageCard.css'
 
-const MessageCard = (props) => {
+const MessageCard = ({message, num, removeMessage, editMessage}) => {
+
     return (
         <div className="message-div">
-            <p>{props.message.content}</p>
+            <p>{num}. {message.content}</p>
+            <button onClick={() => removeMessage(message)} >remove</button>
+            <button onClick={() => editMessage(message)} >edit</button>
         </div>
     )
 }
