@@ -96,11 +96,6 @@ import './Modal.css';
 
 
 
-
-
-
-
-
 const Modal = (props) => {
 
 

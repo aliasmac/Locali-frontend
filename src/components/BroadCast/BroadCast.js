@@ -36,7 +36,7 @@ const BroadCast = ({ renderEditedMessages, newBroadCastMessages,saveBroadcast, u
                     <h1>{currentBroadcast.name}</h1>
                     <div className="broadcast-messages">
                         { newBroadCastMessages.map((msg, idx) =>  <MessageCard num={idx + 1} 
-                                                                            key={idx} message={msg}
+                                                                     oc       key={idx} message={msg}
                                                                             removeMessage={removeMessage}
                                                                             editMessage={editMessage}
                                                                             />) }

@@ -34,7 +34,6 @@ class API {
     }
 
 
-
     static validate () {
     console.log("Hello from inside API.validate") 
       const token = localStorage.getItem('token')
