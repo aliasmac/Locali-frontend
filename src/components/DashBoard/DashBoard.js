@@ -3,12 +3,17 @@ import React from 'react'
 import API from '../../API'
 import './DashBoard.css'
 
+
+
 import { Polygon } from 'react-google-maps';
 
+import PlacesWithStandaloneSearchBox from '../Map/PlacesWithStandaloneSearchBox'
 import MapWithADrawingManager from '../Map/Map'
 import Modal from './Modal/Modal'
 import BroadCast from '../BroadCast/BroadCast'
 import decodeGeoCode from '../HelperFunctions/decodeGeoCode'
+
+const { DrawingManager } = require("react-google-maps/lib/components/drawing/DrawingManager")
 
 
 const googleMapURL = `https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyDXHHDfZvn2QHX42Uwacjmo1PuVfjBsjI8`;
@@ -45,6 +50,8 @@ class DashBoard extends React.Component {
             editText: "",
             messageToEdit: null,
             renderEditedMessages: false,
+            formattedPolygons: null,
+            polygonsToDelete: []
           };
     }
 
@@ -90,30 +97,31 @@ class DashBoard extends React.Component {
 
     renderPolygonsOnMap = () => {
 
+        let polygonsOnMap 
+
         const formattedPolygons = this.state.polygonsCoords.map((poly, idx) => {
             return poly.map(coord => 
                 { return { lat: coord.latitude, lng: coord.longitude } })
         }
         )
 
-        return formattedPolygons.map((coords, idx) => 
-        (    <Polygon
-                path={coords}
-                key={idx}
+        return formattedPolygons.map((coords, idx) => ( 
+ 
+            <Polygon path={coords} key={idx}
                 options={{
                     fillColor: "#000",
                     fillOpacity: 0.4,
                     strokeColor: "#4c75c2",
                     strokeOpacity: 1,
                     strokeWeight: 1
-                }}
-            />
+                }} />
             )
         )
           
     }
 
-    
+
+
     createNewBroadcast = () => {
         this.setState({ showBroadcastModal: true })
     }
@@ -127,9 +135,15 @@ class DashBoard extends React.Component {
     }
 
     doneDrawing = polygon => {        
+        // drawingManager.setDrawingMode(null)
         // if (this.state.polygon) {
         //     this.state.polygon.setMap(null);
         //   }
+
+        console.log("HELLO FROM DONE DRAWING:", polygon.overlay)
+        this.setState({ polygonsToDelete : [...this.state.polygonsToDelete, polygon] })
+        
+        
         this.setState({ polygon })
         this.setState({ fence: polygon.getPath() })
         this.setState({ showModal: true })
@@ -187,12 +201,22 @@ class DashBoard extends React.Component {
 
     saveBroadcast = () => {
         API.saveBroadCast(this.state.currentBroadcast.id)
-            .then(this.setState({ currentBroadcast: null }))
+            .then(broadcast => {
+                const polygons = this.state.polygonsToDelete
+                polygons.map(poly => poly.setMap(null))
+                this.setState({
+                    currentBroadcast: null,
+                    polygonsToDelete: null,
+                })
+
+            })
+                
     }
 
     cancelBroadcast = () => {
         API.deleteBroadcast(this.state.currentBroadcast.id)
             .then(this.setState({ currentBroadcast: null }))   
+
     }
 
     removeMessage = (message) => { 
@@ -238,6 +262,7 @@ class DashBoard extends React.Component {
         // console.log(this.state.showBroadcastModal)
         // console.log("RENDER:", this.state.newBroadCastMessages)
         console.log("EDITED MESSAGES?", this.state.renderEditedMessages)
+        console.log("POLYGONS TO DELETE:", this.state.polygonsToDelete)
 
         const {user, userObject} = this.props
         const {renderPolygonsOnMap,
@@ -261,6 +286,7 @@ class DashBoard extends React.Component {
         return (
 
             <div className="main-container"> 
+         
 
                 <div className="map-section">
 
@@ -276,6 +302,7 @@ class DashBoard extends React.Component {
                             <p>
                             {/* Last fetched: <Moment interval={10000} fromNow>{this.state.lastFetched}</Moment> */}
                             </p>
+                            
                             <MapWithADrawingManager
                                 googleMapURL={googleMapURL}
                                 loadingElement={    <div style={{ height: `100%` }}/>   }
@@ -322,24 +349,26 @@ class DashBoard extends React.Component {
                         {
                             showBroadcastModal &&
                             <form className="broadcast-form-el">
-                                <div>
-                                    <label>Name your broadcast</label>
+                                <div className="broadcast-form-input">
+                                    <label>Name your broadcast</label><br/>
                                     <input
                                         name="newBroadCastName"
                                         type="text"
                                         value={newBroadCastName}
                                         onChange={this.handleChange}
                                         required 
+                                        placeholder="e.g. Pokemon Hunt"
                                     />
                                 </div>
-                                <div>
-                                    <label>Give your broadcast a 4 digit PIN</label>
+                                <div className="broadcast-form-input">
+                                    <label>Choose 4 digit PIN</label><br/>
                                     <input
                                         name="newBroadCastPin"
                                         type="number"
                                         value={newBroadCastPin}
                                         onChange={this.handleChange}
                                         required 
+                                        placeholder="e.g. 1234"
                                     />
                                 </div>
                             </form>

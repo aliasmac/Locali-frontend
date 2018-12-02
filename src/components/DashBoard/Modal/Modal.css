@@ -14,6 +14,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    
 }
 
 .modal-header {
@@ -66,13 +67,6 @@
     height: 5rem;
     margin-bottom: 1rem;
 }
-
-
-.broadcast-form-el label {
-    height: 100rem;
-}
-
-
 
 
 .close-modal-btn {
