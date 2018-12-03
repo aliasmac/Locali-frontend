@@ -13,7 +13,6 @@
     padding: 0.4rem;
 }
 
-
 @keyframes example {
     from {background-color: aliceblue;}
     to {background-color: yellow;}

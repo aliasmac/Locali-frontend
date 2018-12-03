@@ -3,13 +3,26 @@ import './BroadCast.css'
 
 import MessageCard from './MessageCard/MessageCard'
 
-const BroadCast = ({renderDeletedMessage, highlight, renderEditedMessages, newBroadCastMessages,saveBroadcast, userObject, currentBroadcast, cancelBroadcast, renderNewMessages, removeMessage, editMessage}) => {
+const BroadCast = (
+    {renderDeletedMessage,
+        highlight,
+        renderEditedMessages,
+        newBroadCastMessages,
+        saveBroadcast,
+        userObject,
+        currentBroadcast,
+        cancelBroadcast,
+        renderNewMessages,
+        removeMessage,
+        editMessage,
+        polygonsCoords,
+    }) => {
 
-    console.log("Hello from broadcast", userObject)
+    // console.log("Hello from broadcast", userObject)
 
     // const broadcast = userObject.broadcasts[userObject.broadcasts.length - 1]
 
-    console.log(currentBroadcast)
+    // console.log(currentBroadcast)
 
     return (
         <div className="broadcast-section">
@@ -25,6 +38,7 @@ const BroadCast = ({renderDeletedMessage, highlight, renderEditedMessages, newBr
                                                                         removeMessage={removeMessage}
                                                                         editMessage={editMessage}
                                                                         highlight={highlight}
+                                                                        polygonsCoords={polygonsCoords}
                                                                     />) }
                     </div>            
                 </div> : null
@@ -41,6 +55,7 @@ const BroadCast = ({renderDeletedMessage, highlight, renderEditedMessages, newBr
                                                                             removeMessage={removeMessage}
                                                                             editMessage={editMessage}
                                                                             highlight={highlight}
+                                                                            polygonsCoords={polygonsCoords}
                                                                             />) }
                     </div>            
                 </div> : null
@@ -56,13 +71,14 @@ const BroadCast = ({renderDeletedMessage, highlight, renderEditedMessages, newBr
                                                                             removeMessage={removeMessage}
                                                                             editMessage={editMessage}
                                                                             highlight={highlight}
+                                                                            polygonsCoords={polygonsCoords}
                                                                             />) }
                     </div>            
                 </div> : null
             }
 
             {
-                currentBroadcast && !renderNewMessages && !renderEditedMessages ?
+                currentBroadcast && !renderNewMessages && !renderEditedMessages && !renderDeletedMessage ?
                 <div> 
                 <h1>{currentBroadcast.name}</h1>
                     <div className="broadcast-messages">
@@ -71,6 +87,7 @@ const BroadCast = ({renderDeletedMessage, highlight, renderEditedMessages, newBr
                                                                             removeMessage={removeMessage}
                                                                             editMessage={editMessage}
                                                                             highlight={highlight}
+                                                                            polygonsCoords={polygonsCoords}
                                                                             />) }
                     </div>            
                 </div> : null

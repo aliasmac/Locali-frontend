@@ -183,7 +183,7 @@ const MapWithADrawingManager= compose(
     }
 
   
-  {props.renderPolygonsOnMap()}
+  {props.renderPolygons ? props.renderPolygonsOnMap() : null}
   </GoogleMap>
 );
 

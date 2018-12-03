@@ -20,6 +20,8 @@ const googleMapURL = `https://maps.googleapis.com/maps/api/js?libraries=geometry
 
 class DashBoard extends React.Component {
 
+
+   
     constructor(props) {
         super(props)
 
@@ -30,7 +32,7 @@ class DashBoard extends React.Component {
               lng: -0.087613
             },
             renderMap: false,
-            polygon: null,
+            polygon: null,  // ?
             fence: null,
             watchID: null,
             lastFetched: null,
@@ -50,17 +52,22 @@ class DashBoard extends React.Component {
             editText: "",
             messageToEdit: null,
             renderEditedMessages: false,
-            formattedPolygons: null,
             polygonsToDelete: [],
             selectedPolygon: null,
             polygonsOnMap: [],
             highlight: null,
             renderDeletedMessage: false,
+            currentPoly: null,
+            doneDrawingPolys: [],
+            renderPolygons: true,
+            polygonInstances: null,
+            renderMapAgain: false
           };
     }
 
     componentDidMount() {
 
+    
         API.getLastbroadcast()
             .then(broadcast => {
                 if (broadcast) {
@@ -70,6 +77,7 @@ class DashBoard extends React.Component {
                             newBroadCastMessages: broadcast.messages,
                             polygons: this.getGeoFencesFromBroadCast(broadcast)
                         })
+                        // this.setState({ doneDrawingPolys: [...this.state.doneDrawingPolys, this.renderPolygonsOnMap()]})
                     } else {
                         this.setState({ currentBroadcast: null })
                     }
@@ -77,13 +85,15 @@ class DashBoard extends React.Component {
                            
             }) 
 
+
+
     }
 
     getGeoFencesFromBroadCast = (broadcast) => {
-        console.log("getGeoFencesFromBroadCast")
+        // console.log("getGeoFencesFromBroadCast")
         let geofenceArray = []
         broadcast.messages.map(message => geofenceArray = [...geofenceArray, message.geofence])
-        console.log("HELLO FROM GET GEOFENCES:", geofenceArray)
+        // console.log("HELLO FROM GET GEOFENCES:", geofenceArray)
         this.makePolygons(geofenceArray)
       }
 
@@ -105,6 +115,7 @@ class DashBoard extends React.Component {
         this.state.newBroadCastMessages.map(message => {
             const one = coords
             const two = decodeGeoCode(message.geofence)
+            // console.log(two)
             if (one[0]['lat'] === two[0]['latitude'] && one[0]['lng'] === two[0]['longitude']) {
                this.setState({ highlight: message.id })
                setTimeout(() => {
@@ -120,6 +131,12 @@ class DashBoard extends React.Component {
 
     renderPolygonsOnMap = () => {
 
+        if (this.state.renderPolygons === false) {
+            this.setState({
+                renderPolygons: true
+            })
+        }
+
         
         const formattedPolygons = this.state.polygonsCoords.map((poly, idx) => {
             return poly.map(coord => 
@@ -127,29 +144,55 @@ class DashBoard extends React.Component {
         }
         )
 
+        let polygonInstances = []
       
-        return formattedPolygons.map((coords, idx) => 
+        formattedPolygons.map((coords, idx) =>       
 
-            (     
-                   <Polygon
-                        onMouseOver={() => this.setSelectedPolygon(coords) }
-                        path={coords}
-                        key={idx}
-                        options={{
-                            fillColor: "#000",
-                            fillOpacity: 0.4,
-                            strokeColor: "#4c75c2",
-                            strokeOpacity: 1,
-                            strokeWeight: 1,
-                        }
+            // (   
+            //        <Polygon
+            //             onMouseOver={() => this.setSelectedPolygon(coords) }
+            //             path={coords}
+            //             key={idx}
+            //             options={{
+            //                 fillColor: "#000",
+            //                 fillOpacity: 0.4,
+            //                 strokeColor: "#4c75c2",
+            //                 strokeOpacity: 1,
+            //                 strokeWeight: 1,
+            //             }
                        
-                } /> 
-                    )
-      
-            )
-          
-    }
+            //         } /> 
+            // )
 
+            (  
+                    polygonInstances.push(   <Polygon
+                            onMouseOver={() => this.setSelectedPolygon(coords) }
+                            path={coords}
+                            key={idx}
+                            ref={React.createRef()}
+                            options={{
+                                fillColor: "#000",
+                                fillOpacity: 0.4,
+                                strokeColor: "#4c75c2",
+                                strokeOpacity: 1,
+                                strokeWeight: 1,
+                            }}
+                            {...this.props} /> 
+                )
+                
+            )
+
+            
+            
+      
+        )
+        
+
+        console.log("renderPolygonsOnMap", polygonInstances)
+        console.log("renderPolygonsOnMap", polygonInstances.key)
+        this.setState({ polygonInstances: polygonInstances })
+        return polygonInstances
+    }
 
 
     createNewBroadcast = () => {
@@ -165,33 +208,53 @@ class DashBoard extends React.Component {
     }
 
     doneDrawing = polygon => {        
+        console.log("DONE DRAWING:", polygon)
         // drawingManager.setDrawingMode(null)
         // if (this.state.polygon) {
         //     this.state.polygon.setMap(null);
         //   }
 
+        if (this.state.currentPoly) {
+            this.setState({ currentPoly: null })
+        }
+
+        // var vertices = polygon.getPath();
+        // var coords = []
+        // for (var i =0; i < vertices.getLength(); i++) {
+        //     var xy = vertices.getAt(i);
+        //     const lati = xy.lat()
+        //     const lngi = xy.lng()
+        //     coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+        // }
+
         this.setState({ polygonsToDelete : [...this.state.polygonsToDelete, polygon] })
         this.setState({ polygon })
         this.setState({ fence: polygon.getPath() })
         this.setState({ showModal: true })
+        this.setState({ 
+            currentPoly: polygon, 
+            // polygonsCoords: [...this.state.polygonsCoords, coords],
+            // doneDrawingPolys: [...this.state.doneDrawingPolys, polygon],
+        })
 
-        google.maps.event.addListener(polygon, "mouseover", () => {
 
-                var vertices = polygon.getPath();
-                var coords = []
-        
-                for (var i =0; i < vertices.getLength(); i++) {
-                    var xy = vertices.getAt(i);
-                    const lati = xy.lat()
-                    const lngi = xy.lng()
-                    coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+        // google.maps.event.addListener(polygon, "mouseover", () => {
 
-                }
-                // debugger
-                this.setSelectedPolygon(coords)
+        //         var vertices = polygon.getPath();
+        //         var coords = []
+    
+        //         for (var i =0; i < vertices.getLength(); i++) {
+        //             var xy = vertices.getAt(i);
+        //             const lati = xy.lat()
+        //             const lngi = xy.lng()
+        //             coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+
+        //         }
+        //         // debugger
+        //         this.setSelectedPolygon(coords)
                 
 
-        })
+        // })
 
     }
 
@@ -201,17 +264,17 @@ class DashBoard extends React.Component {
 
 
     handleChange = e => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
         this.setState({ [e.target.name]: e.target.value })
     }
 
     handleBroadcastSubmit = () => {
  
     const broadcast = {
-                name: this.state.newBroadCastName,
-                pin: this.state.newBroadCastPin,
-                broadcaster_id: this.props.user.id
-            }
+            name: this.state.newBroadCastName,
+            pin: this.state.newBroadCastPin,
+            broadcaster_id: this.props.user.id
+        }
 
         API.newBroadCast(broadcast)
             .then(broadcast => {
@@ -227,6 +290,7 @@ class DashBoard extends React.Component {
 
     handleMessageSubmit = e => {
         // messageWithPolygon
+        // console.log("HANDLE MESSAGE SUBMIT", this.state.currentPoly)
         const encodedFence = google.maps.geometry.encoding.encodePath(this.state.fence);
         const broadcastMessage = {
             message: this.state.messageText,
@@ -242,11 +306,33 @@ class DashBoard extends React.Component {
                 renderNewMessages: true,
                 renderEditedMessages: false,
                 renderDeletedMessage: false,
-                newBroadCastMessages: [...this.state.newBroadCastMessages, message]
+                newBroadCastMessages: [...this.state.newBroadCastMessages, message],
+                polygon: null,
 
             })
         
         )
+
+        
+        google.maps.event.addListener(this.state.currentPoly, "mouseover", () => {
+
+            // console.log("INSIDE OF EVENT LISTENER", this.state.newBroadCastMessages)
+            const polygon = this.state.currentPoly
+
+            var vertices = polygon.getPath();
+            var coords = []
+
+            for (var i =0; i < vertices.getLength(); i++) {
+                var xy = vertices.getAt(i);
+                const lati = xy.lat()
+                const lngi = xy.lng()
+                coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+            }
+            // debugger
+            this.setSelectedPolygon(coords)
+            
+        
+    })
 
         // this.setState({
         //     messageText: "",
@@ -258,14 +344,14 @@ class DashBoard extends React.Component {
     saveBroadcast = () => {
         API.saveBroadCast(this.state.currentBroadcast.id)
             .then(broadcast => {
-                const polygons = this.state.polygonsToDelete
-                polygons.map(poly => poly.setMap(null))
+                // const polygons = this.state.polygonsToDelete
+                // polygons.map(poly => poly.setMap(null))
                 this.setState({
                     currentBroadcast: null,
                     polygonsToDelete: null,
-                })
-
+                    renderPolygons: false,
             })
+        })
                 
     }
 
@@ -276,25 +362,66 @@ class DashBoard extends React.Component {
     }
 
     removeMessage = (message) => { 
-        const msgs = this.state.newBroadCastMessages.filter(msg => msg.id !== message.id)
-        this.setState({ 
-            newBroadCastMessages: msgs,
-            renderDeletedMessage: true,
-            renderEditedMessages: false,
-            renderNewMessages: false,
+
+        let mssg = decodeGeoCode(message.geofence)
+
+        const formatedMsg = mssg.map(coord => {
+            return { lat: coord.latitude, lng: coord.longitude }
         })
+    
+
+        console.log("FORMATTED", formatedMsg)
+
+        this.state.polygonInstances.map(poly => {
+            console.log("sifgus", poly.props.path)
+            poly.props.path.map(coords => {
+                const one = coords
+                const two = formatedMsg
+
+                // console.log("ONE", one)
+                // console.log("1:", one[0]['lat'])
+                // console.log("2:", two[0]['lat'])
+                // console.log("3:", one[0]['lng'])
+                // console.log("4:", two[0]['lng'])
+                if (one['lat'] === two[0]['lat'] && one['lng'] === two[0]['lng']) {           
+                    // poly.setMap(null)
+                    // poly=null
+                    // poly.props.options
+                console.log("Its working", poly.props.options.fillOpacity = 0)
+                console.log("Its working", poly)
+                
+                 
+            }
+            })
+
+        })
+ 
+
+        ///////
+
+        // console.log("REMOVE MESSAGE:", message)
+        // const msgs = this.state.newBroadCastMessages.filter(msg => msg.id !== message.id)
+
+        // this.setState({ 
+        //     newBroadCastMessages: msgs,
+        //     renderDeletedMessage: true,
+        //     renderEditedMessages: false,
+        //     renderNewMessages: false,  
+        // })
+
+        // API.removeMessage(message.id)
+      
 
 
-        API.removeMessage(message.id)
+        /////////////////////
 
-
+        
 
     }
 
     editMessage = (message) => {
 
         console.log("INSIDE EDIT MESSAGE:", message)
-
         this.setState({ 
             editModal: true,
             editText: message.content, 
@@ -329,10 +456,12 @@ class DashBoard extends React.Component {
 
         // console.log("RENDER:", this.state.polygonsCoords)
         // console.log(this.state.showBroadcastModal)
-        console.log("RENDER:", this.state.newBroadCastMessages)
+        // console.log("RENDER:", this.state.newBroadCastMessages)
         // console.log("EDITED MESSAGES?", this.state.renderEditedMessages)
         // console.log("POLYGONS TO DELETE:", this.state.polygonsToDelete)
-        console.log("selected polygon:", this.state.selectedPolygon)
+        // console.log("selected polygon:", this.state.selectedPolygon)
+        // console.log("DONE DRAWING:", this.state.doneDrawingPolys)
+        
 
         const {user, userObject} = this.props
         const {renderPolygonsOnMap,
@@ -352,6 +481,8 @@ class DashBoard extends React.Component {
                 renderEditedMessages,
                 highlight,
                 renderDeletedMessage,
+                polygonsCoords,
+                renderPolygons,
             } = this.state
 
 
@@ -385,6 +516,7 @@ class DashBoard extends React.Component {
                                 doneDrawing={this.doneDrawing}
                                 polygons={this.state.polygons}
                                 renderPolygonsOnMap={this.renderPolygonsOnMap}
+                                renderPolygons={renderPolygons}
                             />
                         </div>
                     }
@@ -479,6 +611,7 @@ class DashBoard extends React.Component {
                             renderEditedMessages={renderEditedMessages}
                             highlight={highlight}
                             renderDeletedMessage={renderDeletedMessage}
+                            polygonsCoords={polygonsCoords}
                         />
                 }
                 

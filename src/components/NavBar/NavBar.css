@@ -11,13 +11,13 @@
     margin-left: 2rem;
     margin-right: 1rem;
     padding: 0.5rem;
-    color: #4c75c2; 
+    color: #6acbd5; 
     border-radius: 3px;     
 }
 
 .nav-link.logout {
     background: azure;
-    color: #4c75c2;
+    color: #6acbd5;
     margin-right: 2rem;
 }
 
