@@ -51,7 +51,11 @@ class DashBoard extends React.Component {
             messageToEdit: null,
             renderEditedMessages: false,
             formattedPolygons: null,
-            polygonsToDelete: []
+            polygonsToDelete: [],
+            selectedPolygon: null,
+            polygonsOnMap: [],
+            highlight: null,
+            renderDeletedMessage: false,
           };
     }
 
@@ -75,7 +79,6 @@ class DashBoard extends React.Component {
 
     }
 
-
     getGeoFencesFromBroadCast = (broadcast) => {
         console.log("getGeoFencesFromBroadCast")
         let geofenceArray = []
@@ -95,28 +98,55 @@ class DashBoard extends React.Component {
         })
     }
 
+    setSelectedPolygon = (coords) => {
+
+        console.log('setSelectedPolygon', coords)
+        
+        this.state.newBroadCastMessages.map(message => {
+            const one = coords
+            const two = decodeGeoCode(message.geofence)
+            if (one[0]['lat'] === two[0]['latitude'] && one[0]['lng'] === two[0]['longitude']) {
+               this.setState({ highlight: message.id })
+               setTimeout(() => {
+                this.setState({ highlight: null })
+                }, 1000)
+            }
+        })
+
+
+    }
+
+
+
     renderPolygonsOnMap = () => {
 
-        let polygonsOnMap 
-
+        
         const formattedPolygons = this.state.polygonsCoords.map((poly, idx) => {
             return poly.map(coord => 
                 { return { lat: coord.latitude, lng: coord.longitude } })
         }
         )
 
-        return formattedPolygons.map((coords, idx) => ( 
- 
-            <Polygon path={coords} key={idx}
-                options={{
-                    fillColor: "#000",
-                    fillOpacity: 0.4,
-                    strokeColor: "#4c75c2",
-                    strokeOpacity: 1,
-                    strokeWeight: 1
-                }} />
+      
+        return formattedPolygons.map((coords, idx) => 
+
+            (     
+                   <Polygon
+                        onMouseOver={() => this.setSelectedPolygon(coords) }
+                        path={coords}
+                        key={idx}
+                        options={{
+                            fillColor: "#000",
+                            fillOpacity: 0.4,
+                            strokeColor: "#4c75c2",
+                            strokeOpacity: 1,
+                            strokeWeight: 1,
+                        }
+                       
+                } /> 
+                    )
+      
             )
-        )
           
     }
 
@@ -140,14 +170,35 @@ class DashBoard extends React.Component {
         //     this.state.polygon.setMap(null);
         //   }
 
-        console.log("HELLO FROM DONE DRAWING:", polygon.overlay)
         this.setState({ polygonsToDelete : [...this.state.polygonsToDelete, polygon] })
-        
-        
         this.setState({ polygon })
         this.setState({ fence: polygon.getPath() })
         this.setState({ showModal: true })
+
+        google.maps.event.addListener(polygon, "mouseover", () => {
+
+                var vertices = polygon.getPath();
+                var coords = []
+        
+                for (var i =0; i < vertices.getLength(); i++) {
+                    var xy = vertices.getAt(i);
+                    const lati = xy.lat()
+                    const lngi = xy.lng()
+                    coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+
+                }
+                // debugger
+                this.setSelectedPolygon(coords)
+                
+
+        })
+
     }
+
+    // <b>Bermuda Triangle polygon</b><br>Clicked location: <br>51.522883837825944,-0.08266667130044425<br><br>Coordinate 0:<br>51.5222429849892,-0.08258084061196769<br>Coordinate 1:<br>51.52154871757213,-0.0804779887442919<br>Coordinate 2:<br>51.52387180161335,-0.08103588821938956<br>Coordinate 3:<br>51.522883837825944,-0.08266667130044425
+
+
+
 
     handleChange = e => {
         console.log(e.target.value)
@@ -189,8 +240,13 @@ class DashBoard extends React.Component {
                 fence: null,
                 showModal: false,
                 renderNewMessages: true,
+                renderEditedMessages: false,
+                renderDeletedMessage: false,
                 newBroadCastMessages: [...this.state.newBroadCastMessages, message]
-            }, console.log("HELLO FROM INSIDE ADD MESSAGE:", this.state.newBroadCastMessages)))
+
+            })
+        
+        )
 
         // this.setState({
         //     messageText: "",
@@ -221,8 +277,18 @@ class DashBoard extends React.Component {
 
     removeMessage = (message) => { 
         const msgs = this.state.newBroadCastMessages.filter(msg => msg.id !== message.id)
-        this.setState({ newBroadCastMessages: msgs })
+        this.setState({ 
+            newBroadCastMessages: msgs,
+            renderDeletedMessage: true,
+            renderEditedMessages: false,
+            renderNewMessages: false,
+        })
+
+
         API.removeMessage(message.id)
+
+
+
     }
 
     editMessage = (message) => {
@@ -233,6 +299,7 @@ class DashBoard extends React.Component {
             editModal: true,
             editText: message.content, 
             messageToEdit: message
+
         })  
     }
 
@@ -249,6 +316,8 @@ class DashBoard extends React.Component {
                     editText: "",
                     messageToEdit: null,
                     renderEditedMessages: true,
+                    renderNewMessages: false,
+                    renderDeletedMessage: false,
                 })
                 
         )
@@ -260,9 +329,10 @@ class DashBoard extends React.Component {
 
         // console.log("RENDER:", this.state.polygonsCoords)
         // console.log(this.state.showBroadcastModal)
-        // console.log("RENDER:", this.state.newBroadCastMessages)
-        console.log("EDITED MESSAGES?", this.state.renderEditedMessages)
-        console.log("POLYGONS TO DELETE:", this.state.polygonsToDelete)
+        console.log("RENDER:", this.state.newBroadCastMessages)
+        // console.log("EDITED MESSAGES?", this.state.renderEditedMessages)
+        // console.log("POLYGONS TO DELETE:", this.state.polygonsToDelete)
+        console.log("selected polygon:", this.state.selectedPolygon)
 
         const {user, userObject} = this.props
         const {renderPolygonsOnMap,
@@ -280,6 +350,8 @@ class DashBoard extends React.Component {
                 editText,
                 editModal,
                 renderEditedMessages,
+                highlight,
+                renderDeletedMessage,
             } = this.state
 
 
@@ -405,6 +477,8 @@ class DashBoard extends React.Component {
                             removeMessage={this.removeMessage}
                             editMessage={this.editMessage}
                             renderEditedMessages={renderEditedMessages}
+                            highlight={highlight}
+                            renderDeletedMessage={renderDeletedMessage}
                         />
                 }
                 

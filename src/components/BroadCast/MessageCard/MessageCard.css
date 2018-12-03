@@ -13,3 +13,24 @@
     padding: 0.4rem;
 }
 
+
+@keyframes example {
+    from {background-color: aliceblue;}
+    to {background-color: yellow;}
+}
+
+.message-div-show {
+    background: aliceblue;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 5px 8px 0 rgba(0,0,0,0.2), 0 7px 20px 0 rgba(0,0,0,0.17);
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    animation-name: example;
+    animation-duration: 3s;
+}
+
+.message-div-show p {
+    font-family: 'VT323', monospace;
+    padding: 0.4rem;
+}

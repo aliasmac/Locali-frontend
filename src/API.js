@@ -10,6 +10,7 @@ class API {
 
 
     static signup (username, password) {
+      console.log(username)
         return fetch('http://localhost:3000/api/v1/users', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},

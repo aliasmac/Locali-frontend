@@ -14,6 +14,7 @@ class SignUpForm extends React.Component {
     }
 
     handleChange = (e) => {
+        
         this.setState({ [e.target.name]: e.target.value })
     }
 
@@ -27,6 +28,7 @@ class SignUpForm extends React.Component {
     }
 
     signup = () => {
+        console.log("HELLO FROM SIGNUP")
         const {username, password} = this.state
         API.signup(username, password)
             .then(user => {
@@ -65,7 +67,7 @@ class SignUpForm extends React.Component {
                         required 
                         />
                     
-                    <button onSubmit={this.handleSubmit} className='main-btn'>
+                    <button onClick={this.handleSubmit} className='main-btn'>
                         <span>SUBMIT</span>
                     </button>
                 </form>       

@@ -3,7 +3,7 @@ import './BroadCast.css'
 
 import MessageCard from './MessageCard/MessageCard'
 
-const BroadCast = ({ renderEditedMessages, newBroadCastMessages,saveBroadcast, userObject, currentBroadcast, cancelBroadcast, renderNewMessages, removeMessage, editMessage}) => {
+const BroadCast = ({renderDeletedMessage, highlight, renderEditedMessages, newBroadCastMessages,saveBroadcast, userObject, currentBroadcast, cancelBroadcast, renderNewMessages, removeMessage, editMessage}) => {
 
     console.log("Hello from broadcast", userObject)
 
@@ -24,6 +24,7 @@ const BroadCast = ({ renderEditedMessages, newBroadCastMessages,saveBroadcast, u
                                                                         message={msg}
                                                                         removeMessage={removeMessage}
                                                                         editMessage={editMessage}
+                                                                        highlight={highlight}
                                                                     />) }
                     </div>            
                 </div> : null
@@ -36,9 +37,25 @@ const BroadCast = ({ renderEditedMessages, newBroadCastMessages,saveBroadcast, u
                     <h1>{currentBroadcast.name}</h1>
                     <div className="broadcast-messages">
                         { newBroadCastMessages.map((msg, idx) =>  <MessageCard num={idx + 1} 
-                                                                     oc       key={idx} message={msg}
+                                                                            key={idx} message={msg}
                                                                             removeMessage={removeMessage}
                                                                             editMessage={editMessage}
+                                                                            highlight={highlight}
+                                                                            />) }
+                    </div>            
+                </div> : null
+            }
+
+            {
+                currentBroadcast && renderDeletedMessage ?
+                <div> 
+                    <h1>{currentBroadcast.name}</h1>
+                    <div className="broadcast-messages">
+                        { newBroadCastMessages.map((msg, idx) =>  <MessageCard num={idx + 1} 
+                                                                            key={idx} message={msg}
+                                                                            removeMessage={removeMessage}
+                                                                            editMessage={editMessage}
+                                                                            highlight={highlight}
                                                                             />) }
                     </div>            
                 </div> : null
@@ -53,6 +70,7 @@ const BroadCast = ({ renderEditedMessages, newBroadCastMessages,saveBroadcast, u
                                                                             key={idx} message={msg}
                                                                             removeMessage={removeMessage}
                                                                             editMessage={editMessage}
+                                                                            highlight={highlight}
                                                                             />) }
                     </div>            
                 </div> : null
