@@ -112,3 +112,11 @@ form div input {
   color: #EF3B3A;
 }
 
+.error-box {
+  background: #EF3B3A;
+  text-align: center;
+  color: white; 
+}
+
+
+

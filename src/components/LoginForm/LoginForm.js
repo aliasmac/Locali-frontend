@@ -9,7 +9,10 @@ class LoginForm extends React.Component {
         super(props)
         this.state = {
             username: "",
-            password: ""
+            password: "",
+            errors: {
+                username: false,
+            }
         }
     }
 
@@ -28,10 +31,17 @@ class LoginForm extends React.Component {
     }
 
     login = (obj) => {
-        API.login(obj)
-            .then(user => {
-                this.props.login(user)
-            })
+        API.login(obj).then(user => { 
+            if (user.error) {
+                this.setState({
+                    errors: {
+                      username: "Invalid username/password",
+                }})
+                this.props.history.push('/login')
+            } else {
+             this.props.login(user)    
+            }
+        })
     }
 
 
@@ -39,6 +49,9 @@ class LoginForm extends React.Component {
 
         return (
             <div className="login-page">
+                <div className="error-box">
+                    <h3>{this.state.errors.username}</h3>
+                </div>      
                 <div className="form" >
                 <form className="login-form" >
                     <h2>Login</h2>

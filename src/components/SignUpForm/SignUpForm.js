@@ -9,7 +9,10 @@ class SignUpForm extends React.Component {
         super(props)
         this.state = {
             username: "",
-            password: ""
+            password: "",
+            errors: {
+                username: false,
+              }
         }
     }
 
@@ -30,10 +33,19 @@ class SignUpForm extends React.Component {
     signup = () => {
         console.log("HELLO FROM SIGNUP")
         const {username, password} = this.state
-        API.signup(username, password)
-            .then(user => {
-                this.props.login(user)
-            })
+        API.signup(username, password).then(user => {
+            if (user.error.includes('user could not be created!')) {
+                this.setState({
+                    errors: {
+                      username: "Username already taken",
+                }})
+                this.props.history.push('/signup')
+                console.log("HELLO FROM SIGN UP", user.error)
+            } else {
+                this.props.login(user)              
+            }           
+        })
+            
     }
 
 
@@ -41,6 +53,15 @@ class SignUpForm extends React.Component {
 
         return (
             <div className="signup-page">
+                <div className="error-box"
+                // style={{
+                //     transform: this.state.errors.username  ? 'translateY(-60vh)' : 'translateY(-100vh)',
+                //     opacity: this.state.errors.username ? '1' : '0',
+                //     }}
+                >
+                    <h3>{this.state.errors.username}</h3>
+                </div>      
+                
                 <div className="form" >
                 <form className="signup-form" >
                     <h2>Sign Up</h2>

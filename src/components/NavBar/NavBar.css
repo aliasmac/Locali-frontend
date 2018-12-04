@@ -1,18 +1,24 @@
 .nav-bar-one, .nav-bar-two {
-    height: 4rem;
+    height: 5.3rem;
     background: #030056; 
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
 }
+
 
 .nav-link {
     text-decoration: none;
     margin-left: 2rem;
     margin-right: 1rem;
-    padding: 0.5rem;
+    padding: 0.8rem;
     color: #6acbd5; 
     border-radius: 3px;     
+
+}
+
+.right-nav span {
+    font-size: 1.2rem;
 }
 
 .nav-link.logout {
@@ -21,8 +27,12 @@
     margin-right: 2rem;
 }
 
-
 .nav-link:hover {
     background: #100c88; 
     color: azure;
+}
+
+.nav-bar-one img, .nav-bar-two img {
+    height: 3.8rem;
+    margin-left: 2rem;
 }
