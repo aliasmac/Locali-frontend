@@ -1,13 +1,21 @@
 .broadcast-section {
     position: relative;
-    background: #4c75c2;  
+    background: #ffffff;  
     width: 25%;
+    height: 42rem;
     margin-top: 2rem;
-    height: 43rem;
+    margin-right: 1rem;
+    top: 0;
+    border: 0.5px solid rgba(105,105,105, 0.3);
+    border-radius: 5px;
 }
 
 .broadcast-section h1 {
-    text-align: center;
+    text-align: left;
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+    color: black;
+    font-size: 2rem;
 }
 
 .broadcast-messages {
@@ -21,7 +29,7 @@
     width: 100%;
 }
 
-.broadcast-section button {
+.broadcast-buttons button {
     display: inline-block;
     text-transform: uppercase;
     outline: 0;
@@ -34,6 +42,17 @@
     -webkit-transition: all 0.3 ease;
     transition: all 0.3 ease;
     cursor: pointer;
+    
+}
+
+.broadcast-buttons .save  {
+    border: 0;
+    border-bottom-left-radius: 5px;
+}
+
+.broadcast-buttons .cancel {
+    border: 0;
+    border-bottom-right-radius: 5px;
 }
 
 

@@ -1,16 +1,21 @@
 /* global google */
 import React from 'react'
+
+import { render } from 'react-dom';
+
+
 import API from '../../API'
 import './DashBoard.css'
-
-
+import './Modal/Modal.css'
 
 import { Polygon } from 'react-google-maps';
-
-import PlacesWithStandaloneSearchBox from '../Map/PlacesWithStandaloneSearchBox'
 import MapWithADrawingManager from '../Map/Map'
 import Modal from './Modal/Modal'
 import BroadCast from '../BroadCast/BroadCast'
+
+import HelpSlide from '../HelpSection/HelpSlide'
+import HelpSlideSelector from '../HelpSection/HelpSlideSelector'
+
 import decodeGeoCode from '../HelperFunctions/decodeGeoCode'
 
 const { DrawingManager } = require("react-google-maps/lib/components/drawing/DrawingManager")
@@ -40,7 +45,7 @@ class DashBoard extends React.Component {
             showBroadcastModal: false,
             messageText: "",
             newBroadCastName: "",
-            newBroadCastPin: "",
+            newBroadCastCode: "",
             newBroadCastMessages: [],
             currentBroadcast: null,
             getLastBroadCast: false,
@@ -61,7 +66,10 @@ class DashBoard extends React.Component {
             doneDrawingPolys: [],
             renderPolygons: true,
             polygonInstances: null,
-            renderMapAgain: false
+            renderMapAgain: false,
+            errorMessage: null,
+            visible: false,
+
           };
     }
 
@@ -128,22 +136,17 @@ class DashBoard extends React.Component {
     }
 
 
-
     renderPolygonsOnMap = () => {
-
         if (this.state.renderPolygons === false) {
             this.setState({
                 renderPolygons: true
             })
         }
 
-        
         const formattedPolygons = this.state.polygonsCoords.map((poly, idx) => {
             return poly.map(coord => 
                 { return { lat: coord.latitude, lng: coord.longitude } })
-        }
-        )
-
+        })
         let polygonInstances = []
       
         formattedPolygons.map((coords, idx) =>       
@@ -181,12 +184,8 @@ class DashBoard extends React.Component {
                 )
                 
             )
-
-            
-            
       
         )
-        
 
         console.log("renderPolygonsOnMap", polygonInstances)
         console.log("renderPolygonsOnMap", polygonInstances.key)
@@ -204,7 +203,13 @@ class DashBoard extends React.Component {
 		this.setState({
             showModal: false,
             showBroadcastModal: false
-		});
+        });
+        
+        if (this.state.visible) {
+            this.setState({
+                visible: !this.state.visible
+            })
+        }
     }
 
     doneDrawing = polygon => {        
@@ -272,21 +277,34 @@ class DashBoard extends React.Component {
  
     const broadcast = {
             name: this.state.newBroadCastName,
-            pin: this.state.newBroadCastPin,
+            code: this.state.newBroadCastCode.toLowerCase(),
             broadcaster_id: this.props.user.id
         }
 
         API.newBroadCast(broadcast)
-            .then(broadcast => {
-                this.setState({
-                    // renders map component and broadcast RHS column
-                    renderMap: true,
-                    showBroadcastModal: false,
-                    currentBroadcast: broadcast,
-
-                }) 
+            .then(broadcast => 
+                
+                {
+                    if (broadcast.error) {
+                        console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
+                        this.setState({
+                            errorMessage: "Broadcast name already taken",
+                            newBroadCastName: "",
+                        })
+                    } else {
+                        this.setState({
+                            // renders map component and broadcast RHS column
+                            renderMap: true,
+                            showBroadcastModal: false,
+                            currentBroadcast: broadcast,
+                            newBroadCastName: "",
+                            newBroadCastCode: "",
+                        })           
+                    }
+         
             })
     }
+
 
     handleMessageSubmit = e => {
         // messageWithPolygon
@@ -363,53 +381,53 @@ class DashBoard extends React.Component {
 
     removeMessage = (message) => { 
 
-        let mssg = decodeGeoCode(message.geofence)
+        // let mssg = decodeGeoCode(message.geofence)
 
-        const formatedMsg = mssg.map(coord => {
-            return { lat: coord.latitude, lng: coord.longitude }
-        })
+        // const formatedMsg = mssg.map(coord => {
+        //     return { lat: coord.latitude, lng: coord.longitude }
+        // })
     
 
-        console.log("FORMATTED", formatedMsg)
+        // console.log("FORMATTED", formatedMsg)
 
-        this.state.polygonInstances.map(poly => {
-            console.log("sifgus", poly.props.path)
-            poly.props.path.map(coords => {
-                const one = coords
-                const two = formatedMsg
+        // this.state.polygonInstances.map(poly => {
+        //     console.log("sifgus", poly.props.path)
+        //     poly.props.path.map(coords => {
+        //         const one = coords
+        //         const two = formatedMsg
 
-                // console.log("ONE", one)
-                // console.log("1:", one[0]['lat'])
-                // console.log("2:", two[0]['lat'])
-                // console.log("3:", one[0]['lng'])
-                // console.log("4:", two[0]['lng'])
-                if (one['lat'] === two[0]['lat'] && one['lng'] === two[0]['lng']) {           
-                    // poly.setMap(null)
-                    // poly=null
-                    // poly.props.options
-                console.log("Its working", poly.props.options.fillOpacity = 0)
-                console.log("Its working", poly)
+        //         // console.log("ONE", one)
+        //         // console.log("1:", one[0]['lat'])
+        //         // console.log("2:", two[0]['lat'])
+        //         // console.log("3:", one[0]['lng'])
+        //         // console.log("4:", two[0]['lng'])
+        //         if (one['lat'] === two[0]['lat'] && one['lng'] === two[0]['lng']) {           
+        //             // poly.setMap(null)
+        //             // poly=null
+        //             // poly.props.options
+        //         console.log("Its working", poly.props.options.fillOpacity = 0)
+        //         console.log("Its working", poly)
                 
                  
-            }
-            })
+        //     }
+        //     })
 
-        })
+        // })
  
 
         ///////
 
-        // console.log("REMOVE MESSAGE:", message)
-        // const msgs = this.state.newBroadCastMessages.filter(msg => msg.id !== message.id)
+        console.log("REMOVE MESSAGE:", message)
+        const msgs = this.state.newBroadCastMessages.filter(msg => msg.id !== message.id)
 
-        // this.setState({ 
-        //     newBroadCastMessages: msgs,
-        //     renderDeletedMessage: true,
-        //     renderEditedMessages: false,
-        //     renderNewMessages: false,  
-        // })
+        this.setState({ 
+            newBroadCastMessages: msgs,
+            renderDeletedMessage: true,
+            renderEditedMessages: false,
+            renderNewMessages: false,  
+        })
 
-        // API.removeMessage(message.id)
+        API.removeMessage(message.id)
       
 
 
@@ -428,6 +446,10 @@ class DashBoard extends React.Component {
             messageToEdit: message
 
         })  
+    }
+
+    closeEditMessage = () => {
+        this.setState({ editModal: false})
     }
 
     handleMessageSubmitEdit = () => {
@@ -449,6 +471,12 @@ class DashBoard extends React.Component {
                 
         )
 
+    }
+
+    toggleMenu = () => {
+        this.setState({
+            visible: !this.state.visible
+        });
     }
         
 
@@ -483,17 +511,22 @@ class DashBoard extends React.Component {
                 renderDeletedMessage,
                 polygonsCoords,
                 renderPolygons,
+                errorMessage,
+                visible,
             } = this.state
 
 
         return (
 
             <div className="main-container"> 
-         
 
+                <HelpSlide visible={visible} toggleMenu={this.toggleMenu} />
+                <HelpSlideSelector toggleMenu={this.toggleMenu} />
+                
+         
                 <div className="map-section">
 
-                    { showModal || showBroadcastModal ? <div onClick={this.closeModalHandler} className="back-drop"></div> : null }
+                    { showModal || showBroadcastModal || visible ? <div onClick={this.closeModalHandler} className="back-drop"></div> : null }
 
                     <button onClick={() => this.createNewBroadcast()}
                     className={'create-new-broadcast' + (currentBroadcast ? '-hide' : "")}
@@ -530,11 +563,17 @@ class DashBoard extends React.Component {
                         handleMessageSubmit={this.handleMessageSubmit}
                         handleBroadcastSubmit={this.handleBroadcastSubmit}
                         handleMessageSubmitEdit={this.handleMessageSubmitEdit}
+                        closeEditMessage={this.closeEditMessage}
                     >
+
 
                         {
                             showModal &&
+                            <>
                             <form id="message-form" className="message-form">
+                            <div className="error-box-dashboard" >
+                                <h3>{errorMessage}</h3>
+                            </div>  
                                 <div>
                                     <textarea
                                         name="messageText"
@@ -547,6 +586,7 @@ class DashBoard extends React.Component {
                                     </textarea>
                                 </div>
                             </form>
+                            </>
                         }
 
 
@@ -562,17 +602,19 @@ class DashBoard extends React.Component {
                                         onChange={this.handleChange}
                                         required 
                                         placeholder="e.g. Pokemon Hunt"
+                                        maxlength={12}
                                     />
                                 </div>
                                 <div className="broadcast-form-input">
-                                    <label>Choose 4 digit PIN</label><br/>
+                                    <label>Choose 6 character code</label><br/>
                                     <input
-                                        name="newBroadCastPin"
-                                        type="number"
+                                        name="newBroadCastCode"
+                                        type="text"
                                         value={newBroadCastPin}
                                         onChange={this.handleChange}
                                         required 
-                                        placeholder="e.g. 1234"
+                                        placeholder="e.g. excelsior"
+                                        maxlength={6}
                                     />
                                 </div>
                             </form>
@@ -582,6 +624,7 @@ class DashBoard extends React.Component {
                             editModal &&
                             <form className="edit-form">
                                 <div>
+
                                     <textarea
                                         name="editText"
                                         onChange={this.handleChange}

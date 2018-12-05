@@ -1,0 +1,55 @@
+#slider {
+    width: 100vw;
+    height: 100vh;
+    background-color: #6acbd5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: transform .7s
+                cubic-bezier(0, .52, 0, 1);
+    overflow: scroll;
+    z-index: 1;
+  }
+   
+  #slider.hide {
+    transform: translate3d(-100vw, 0, 0);
+  }
+   
+  #slider.show {
+    transform: translate3d(-70vw, 0, 0);
+    overflow: hidden;
+  }
+
+  #slider.show .instructions-div {
+    display: flex;
+    justify-content: flex-end;
+    height: 42rem;
+    margin-top: 1.3rem;
+    margin-right: 2rem;
+    z-index: 2;
+  }
+
+  #slider.show .instructions-div .instructions {
+    width: 26rem;
+    overflow: auto;
+  }
+  #slider.show .instructions-div .instructions div {
+    margin-bottom: 0.4rem;
+    background: white;
+    padding: 0.3rem;
+  }
+
+  #slider.show .instructions-div h3 {
+    color: black;
+  }
+
+   
+  /* #flyoutMenu h2 a {
+    color: #333;
+    margin-left: 15px;
+    text-decoration: none;
+  }
+   
+  #flyoutMenu h2 a:hover {
+    text-decoration: underline;
+  } */

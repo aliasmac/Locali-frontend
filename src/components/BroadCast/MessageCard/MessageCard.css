@@ -1,16 +1,21 @@
 
 .message-div {
     background: aliceblue;
-    border: 0;
+    
     border-radius: 3px;
-    box-shadow: 0 5px 8px 0 rgba(0,0,0,0.2), 0 7px 20px 0 rgba(0,0,0,0.17);
+    border: 0.5px solid rgba(105,105,105, 0.3);
+    
+    /* box-shadow: 0 5px 8px 0 rgba(0,0,0,0.2), 0 7px 20px 0 rgba(0,0,0,0.17); */
     margin-bottom: 1rem;
     overflow-x: auto;
+    height: 7rem;
+    position: relative;
 }
 
 .message-div p {
-    font-family: 'VT323', monospace;
+    font-family: 'Roboto', sans-serif;
     padding: 0.4rem;
+    
 }
 
 @keyframes example {
@@ -30,6 +35,63 @@
 }
 
 .message-div-show p {
-    font-family: 'VT323', monospace;
+    font-family: 'Roboto', sans-serif;
     padding: 0.4rem;
+}
+
+
+/* .message-div button {
+    display: inline-block;
+    text-transform: uppercase;
+    outline: 0;
+    background: #030056; 
+    min-height: .4rem;
+    width: 50%;
+    border: 0;
+    padding: 15px;
+    color: #6acbd5;  
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+    
+} */
+
+/* .message-div-show button {
+    display: inline-block;
+    text-transform: uppercase;
+    outline: 0;
+    background: #030056; 
+    height: 5rem;
+    width: 50%;
+    border: 0;
+    padding: 15px;
+    color: #6acbd5;  
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+    
+} */
+
+.message-card-remove {
+    height: 2rem;
+    width: 50%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border: 0;
+}
+
+.message-card-save {
+    height: 2rem;
+    width: 50%;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border: 0;
+}
+
+.message-card-remove span, .message-card-save span {
+    color: gray;
 }

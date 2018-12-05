@@ -4,6 +4,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 1;
 }
 
 
@@ -14,7 +15,6 @@
     padding: 0.8rem;
     color: #6acbd5; 
     border-radius: 3px;     
-
 }
 
 .right-nav span {

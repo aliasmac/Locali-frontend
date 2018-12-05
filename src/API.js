@@ -64,7 +64,7 @@ class API {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           name: broadcast.name,
-          pin: broadcast.pin,
+          code: broadcast.code,
           broadcaster_id: broadcast.broadcaster_id
         })
       }).then(resp => resp.json())

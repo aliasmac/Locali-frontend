@@ -24,8 +24,8 @@ const MessageCard = ({highlight, message, num, removeMessage, editMessage, polyg
     return (    
         <div className={'message-div' + (highlight === message.id ? "-show" : "") } >
             <p>{num}. {message.content}</p>
-            <button onClick={() => removeMessage(message)} >remove</button>
-            <button onClick={() => editMessage(message)} >edit</button>
+            <button className="message-card-remove" onClick={() => removeMessage(message)} ><span>remove</span></button>
+            <button className="message-card-save" onClick={() => editMessage(message)} ><span>edit</span></button>
         </div>
     )
 }

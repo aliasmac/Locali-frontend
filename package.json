@@ -7,8 +7,10 @@
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-google-maps": "^9.4.5",
+    "react-modal": "^3.6.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
+    "react-sliding-pane": "^3.0.1",
     "recompose": "^0.30.0",
     "semantic-ui-react": "^0.83.0",
     "styled-components": "^4.1.2"

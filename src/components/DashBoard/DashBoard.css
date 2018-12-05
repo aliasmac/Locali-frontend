@@ -1,6 +1,7 @@
 .main-container {
     display: flex;
     justify-content: space-around;
+    height: 45rem;
 }
 
 .map-section {
@@ -9,9 +10,6 @@
     flex-direction: column;
 }
 
-/* .map-container-parent {
-
-} */
 
 .create-new-broadcast {
     width: 10rem;
@@ -61,4 +59,7 @@
     margin-top: 0.5rem;
 }
 
-  
+.error-box-dashboard {
+    background: red; 
+    color: white; 
+}

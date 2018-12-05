@@ -34,7 +34,7 @@ class SignUpForm extends React.Component {
         console.log("HELLO FROM SIGNUP")
         const {username, password} = this.state
         API.signup(username, password).then(user => {
-            if (user.error.includes('user could not be created!')) {
+            if (user.error) {
                 this.setState({
                     errors: {
                       username: "Username already taken",

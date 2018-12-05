@@ -8,6 +8,7 @@ import SignUpForm from './components/SignUpForm/SignUpForm'
 import LoginForm from './components/LoginForm/LoginForm'
 import DashBoard from './components/DashBoard/DashBoard'
 import LandingPage from './components/LandingPage/LandingPage'
+import NycTraffic from './NycTraffic.mp4'
 
 
 class App extends Component {
@@ -15,7 +16,8 @@ class App extends Component {
   state = {
     user: null,
     renderMap: false,
-    userObject: null
+    userObject: null,
+    showVideo: false
   }
 
  
@@ -57,7 +59,9 @@ class App extends Component {
 
 
   render() {
-    console.log("Hello from start of render in APP.js", this.state.userObject)
+    // console.log("Hello from start of render in APP.js", this.state.userObject)
+
+    console.log(this.props.history.location.pathname)
     
     const {user, renderMap, userObject} = this.state
 
@@ -65,30 +69,65 @@ class App extends Component {
       <div className="main">
           <Route path='/' render={(routerProps) => 
           <>
-            <div>
+            <div className="" >
               <NavBar {...routerProps} 
                 user={this.state.user}
                 logout={this.logout}
               /> 
-            </div>
+              
+            </div> 
           </>  
           } />
-        {/* BODY PAGES */}
+
+          {
+            this.props.history.location.pathname === '/' &&
+            <div>
+            <div id="video-box" >
+            <div id="video_overlays"></div>
+              <div className="banner-text-overlay">
+                <div className="banner-text">
+                  <h1><span>Locali</span> helps you<br/> connect with your <br/>customers where<br/> it matters.</h1>
+                  <p>An intelligent location based marketing system that helps<br/> you
+                    deliver your message to your customer in real-time.</p>
+                </div>
+              </div>  
+            <div>
+              <video className='videoTag' autoPlay loop muted >
+                <source src={NycTraffic} type='video/mp4' />      
+              </video>
+            </div>
+            
+          </div>
+          <footer>
+              <div className="copyright">
+                <span>COPYRIGHT &copy; 2018 ALIASGAR MAKDA</span>
+              </div>
+          </footer> 
+          </div>
+          }
+        
         {
           !user ?
-          <>
+          <div>
               {/* <Route path='/dashboard' render={(routerProps) => <DashBoard /> } /> */}
-              <Route path='/signup' render={(routerProps) => <SignUpForm
+              <div className="landing-nav">
+                <Route path='/signup' render={(routerProps) => <SignUpForm
+                  login={this.login}
+                  history={this.props.history}
+                  /> } />
+                <Route
+                path='/login'
+                render={(routerProps) => <LoginForm
                 login={this.login}
                 history={this.props.history}
                 /> } />
-              <Route path='/login' render={(routerProps) => <LoginForm
-              login={this.login}
-              history={this.props.history}
-              /> } />
-          </>      
+              </div>
+
+          </div>      
           :
           // Add container here
+          <>
+          
           <Route path='/create-broadcast' render={(routerProps) =>
                 <DashBoard
                   user={user}
@@ -96,6 +135,7 @@ class App extends Component {
                 />
               } />
           
+          </>
         }        
         
       </div>

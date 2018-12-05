@@ -12,28 +12,24 @@ const NavBar = ({user, logout, history}) => {
         <div>      
             
             <nav >
-            
+            {/* onClick={() => {history.push('/') } } */}
                 {
                     user ?
                     <div className="nav-bar-one">
                     <div className="left-nav">
-                        <img src={logo} className='logo' alt='logo' onClick={() => {history.push('/') } }/>
+                        <img src={logo} className='logo' alt='logo' />
                     </div>
                     <div className="right-nav"> 
-                        <NavLink to='/' className={'nav-link'}>
+                        {/* <NavLink to='/' className={'nav-link'}>
                             <span>Home</span>
-                        </NavLink>
+                        </NavLink> */}
 
                         <NavLink to='/create-broadcast' className={'nav-link'}>
-                            <span>Create Broadcast</span>
+                            <span>Broadcast Manager</span>
                         </NavLink> 
 
                         <NavLink to='/history' className={'nav-link'}>
-                            <span>Broadcast History</span>
-                        </NavLink> 
-
-                        <NavLink to='/history' className={'nav-link'}>
-                            <span>Info Page</span>
+                            <span>Dashboard</span>
                         </NavLink> 
 
                         <span onClick={logout} className={'nav-link logout'}>Logout</span>

@@ -108,6 +108,7 @@ const Modal = (props) => {
         handleMessageSubmit,
         handleBroadcastSubmit,
         handleMessageSubmitEdit,
+        closeEditMessage,
     } = props
 
     return (
@@ -124,9 +125,9 @@ const Modal = (props) => {
                 {   
                     showMessageModal &&
                     <div className="modal-container" >
+                        <div className="close-modal-btn" onClick={close}>X</div>    
                         <div className="modal-header">
                             <h3>Create new message</h3>
-                            <span className="close-modal-btn" onClick={close}>×</span>
                         </div>
                         <div className="modal-body">
                                 {children}
@@ -156,10 +157,12 @@ const Modal = (props) => {
 
                 {
                     showEditModal && 
+                    
                     <div className="modal-container"  >
+                    <div className="close-modal-btn" onClick={closeEditMessage}>X</div>
                         <div className="modal-header">
+                        
                         <h3>Edit Message</h3>
-                        <span className="close-modal-btn" onClick={close}>×</span>
                         </div>
                         <div className="modal-body">
                                 {children}

@@ -2,6 +2,7 @@ import React from 'react';
 import './BroadCast.css'
 
 import MessageCard from './MessageCard/MessageCard'
+var _ = require('lodash');
 
 const BroadCast = (
     {renderDeletedMessage,
@@ -30,7 +31,7 @@ const BroadCast = (
             {
                 currentBroadcast && renderNewMessages ?
                 <div> 
-                    <h1>{currentBroadcast.name}</h1>
+                    <h1>{_.capitalize(currentBroadcast.name)}</h1>
                     <div className="broadcast-messages">
                         { newBroadCastMessages.map((msg, idx) =>  <MessageCard num={idx + 1} 
                                                                         key={idx}
@@ -97,8 +98,8 @@ const BroadCast = (
 
 
             <div className="broadcast-buttons" >
-                <button onClick={saveBroadcast}>Save Broadcast</button>    
-                <button onClick={cancelBroadcast} >Cancel</button>
+                <button className='save' onClick={saveBroadcast}>Save Broadcast</button>    
+                <button className='cancel' onClick={cancelBroadcast} >Cancel</button>
             </div>
         </div>
     )
