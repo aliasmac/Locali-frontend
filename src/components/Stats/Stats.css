@@ -1,0 +1,17 @@
+
+.stats-container {
+    display: flex;
+    height: 45rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.coming-soon-div {
+    text-align: center;
+}
+
+/* .stats-container h1 {
+    font-family: 'Redressed', cursive;
+} */
+
+

@@ -1,13 +1,13 @@
 .help-selector {
     display: flex;
     align-items: center;
-    background: #6acbd5;
-    left: 10rem;
-    
+    background: azure;
+    /* left: 10rem; */
+    border-right:  1px solid rgba(105,105,105, 0.3);
 }
 
 .help-selector div {
-    margin-top: -10rem;
+    margin-top: -8rem;
     margin-left: 1rem;
     margin-right: 1rem;
     font-size: 4rem;
@@ -18,5 +18,5 @@
 }
 
 .help-selector div i:hover {
-    color: white;
+    color: #6acbd5;
 }

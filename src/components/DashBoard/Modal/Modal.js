@@ -121,7 +121,6 @@ const Modal = (props) => {
                     opacity: showMessageModal || showBroadcastModal || showEditModal ? '1' : '0'
                 }}>
                 
-
                 {   
                     showMessageModal &&
                     <div className="modal-container" >

@@ -20,7 +20,12 @@ const HelpSlide = ({visible, toggleMenu}) => {
           <div className="instructions">
             <h3>Welcome to Locali</h3>
 
-            <p>Please take a moment to read the follwoing instructions to get started
+            <p>Locali gives it's users the power to send tailored messages to their
+              customer base in the real world. The desktop apps syncs with the mobile
+              app to ensure your users have access to your broadcast. When they enter
+              a region you've speifcied on the map, they'll get the related notifcation.</p>
+
+            <p>Please take a moment to read the following instructions to get started
               using the Broadcast Manager.</p>
 
             <div><p>1. To start a new broadcast, either click 'create new broadcast' or save

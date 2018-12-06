@@ -75,25 +75,21 @@ class DashBoard extends React.Component {
 
     componentDidMount() {
 
-    
-        API.getLastbroadcast()
-            .then(broadcast => {
-                if (broadcast) {
-                    if (broadcast.saved === false ) {
+        API.getUserObj(this.props.user.id)
+                .then(user => {
+                    const {broadcasts} = user
+
+                    if (broadcasts.length > 0) {                  
+                        const lastBrodcast = broadcasts[broadcasts.length - 1]
+        
                         this.setState({
-                            currentBroadcast: broadcast,
-                            newBroadCastMessages: broadcast.messages,
-                            polygons: this.getGeoFencesFromBroadCast(broadcast)
+                            currentBroadcast: lastBrodcast,
+                            newBroadCastMessages: lastBrodcast.messages,
+                            polygons: this.getGeoFencesFromBroadCast(lastBrodcast)
                         })
-                        // this.setState({ doneDrawingPolys: [...this.state.doneDrawingPolys, this.renderPolygonsOnMap()]})
-                    } else {
-                        this.setState({ currentBroadcast: null })
-                    }
-                }
-                           
-            }) 
-
-
+                    }    
+        
+            })
 
     }
 
@@ -514,6 +510,8 @@ class DashBoard extends React.Component {
                 errorMessage,
                 visible,
             } = this.state
+
+            console.log("USER OBJECT:",userObject)
 
 
         return (

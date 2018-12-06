@@ -18,6 +18,7 @@ const NavBar = ({user, logout, history}) => {
                     <div className="nav-bar-one">
                     <div className="left-nav">
                         <img src={logo} className='logo' alt='logo' />
+                        <span><strong>Beta</strong></span>
                     </div>
                     <div className="right-nav"> 
                         {/* <NavLink to='/' className={'nav-link'}>
@@ -28,7 +29,7 @@ const NavBar = ({user, logout, history}) => {
                             <span>Broadcast Manager</span>
                         </NavLink> 
 
-                        <NavLink to='/history' className={'nav-link'}>
+                        <NavLink to='/dashboard' className={'nav-link'}>
                             <span>Dashboard</span>
                         </NavLink> 
 
@@ -39,6 +40,7 @@ const NavBar = ({user, logout, history}) => {
                     <div className="nav-bar-two">
                     <div className="left-nav">
                         <img src={logo} className='logo' alt='logo' onClick={() => {history.push('/') } }/>
+                        <span><strong>Beta</strong></span>
                     </div>
                     <div className="right-nav" >
                         <NavLink to='/signup' className={'nav-link'}>

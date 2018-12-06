@@ -63,3 +63,17 @@
     background: red; 
     color: white; 
 }
+
+.message-form textarea {
+    width: 20rem;
+    height: 6rem;
+    margin-bottom: 1rem;
+    overflow: auto;
+}
+
+.edit-form textarea {
+    width: 20rem;
+    height: 6rem;
+    margin-bottom: 1rem;
+    overflow: auto;
+}
