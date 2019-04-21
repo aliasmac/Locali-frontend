@@ -13,7 +13,7 @@ export default function decodeGeoCode(encoded) {
             shift += 5;
         } while (b >= 0x20);
   
-        var dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+        var dlat = (result & 1) !== 0 ? ~(result >> 1) : (result >> 1);
         lat += dlat;
   
         shift = 0;
@@ -25,7 +25,7 @@ export default function decodeGeoCode(encoded) {
             shift += 5;
         } while (b >= 0x20);
   
-        var dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+        var dlng = (result & 1) !== 0 ? ~(result >> 1) : (result >> 1);
         lng += dlng;
   
         var p = {

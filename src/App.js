@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Route, withRouter, Switch} from 'react-router-dom';
+import { Route, withRouter} from 'react-router-dom';
 
 import API from './API'
 import NavBar from './components/NavBar/NavBar'
@@ -8,7 +8,6 @@ import SignUpForm from './components/SignUpForm/SignUpForm'
 import LoginForm from './components/LoginForm/LoginForm'
 import DashBoard from './components/DashBoard/DashBoard'
 import Stats from './components/Stats/Stats'
-import LandingPage from './components/LandingPage/LandingPage'
 import NycTraffic from './NycTraffic.mp4'
 
 
@@ -59,7 +58,7 @@ class App extends Component {
 
   render() {
     
-    const {user, renderMap, userObject} = this.state
+    const {user, userObject} = this.state
 
     return (
       <div className="main">

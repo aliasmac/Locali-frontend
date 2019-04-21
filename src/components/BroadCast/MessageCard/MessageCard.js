@@ -1,8 +1,6 @@
 import React from 'react';
 import './MessageCard.css'
 
-import decodeGeoCode from '../../HelperFunctions/decodeGeoCode'
-
 const MessageCard = ({highlight, message, num, removeMessage, editMessage, polygonsCoords}) => {
 
     // polygonsToDelete.filter(poly => poly.id !== )

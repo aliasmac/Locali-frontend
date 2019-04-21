@@ -1,6 +1,7 @@
 /* global google */
+// import('dotenv').config()
 import React from 'react'
-require('dotenv').config()
+
 
 import API from '../../API'
 import './DashBoard.css'
@@ -16,330 +17,278 @@ import HelpSlideSelector from '../HelpSection/HelpSlideSelector'
 
 import decodeGeoCode from '../HelperFunctions/decodeGeoCode'
 
-const { DrawingManager } = require("react-google-maps/lib/components/drawing/DrawingManager")
+// const { DrawingManager } = require("react-google-maps/lib/components/drawing/DrawingManager")
 
-
-const googleMapURL = `https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=${GOOGLE_LOCALI_API_KEY}`;
+const googleMapURL = `https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=${process.env.GOOGLE_LOCALI_API_KEY}`;
 
 class DashBoard extends React.Component {
-
-
    
-    constructor(props) {
-        super(props)
+  constructor(props) {
+      super(props)
 
-        this.state = {
-          center: {
-            // Flatiron School
-            lat: 51.520534,
-            lng: -0.087613
-          },
-          renderMap: false,
-          polygon: null,  // ?
-          fence: null,
-          watchID: null,
-          lastFetched: null,
-          showModal: false,
-          showBroadcastModal: false,
-          messageText: "",
-          newBroadCastName: "",
-          newBroadCastCode: "",
-          newBroadCastMessages: [],
-          currentBroadcast: null,
-          getLastBroadCast: false,
-          renderNewMessages: false,
-          currentBroadcastPolygons: null,
-          polygons: [],
-          polygonsCoords: [],
-          editModal: false,
-          editText: "",
-          messageToEdit: null,
-          renderEditedMessages: false,
-          polygonsToDelete: [],
-          selectedPolygon: null,
-          polygonsOnMap: [],
-          highlight: null,
-          renderDeletedMessage: false,
-          currentPoly: null,
-          doneDrawingPolys: [],
-          renderPolygons: true,
-          polygonInstances: null,
-          renderMapAgain: false,
-          errorMessage: null,
-          visible: false,
-          };
-    }
+      this.state = {
+        center: {
+          // Flatiron School
+          lat: 51.520534,
+          lng: -0.087613
+        },
+        renderMap: false,
+        polygon: null,  // ?
+        fence: null,
+        watchID: null,
+        lastFetched: null,
+        showModal: false,
+        showBroadcastModal: false,
+        messageText: "",
+        newBroadCastName: "",
+        newBroadCastCode: "",
+        newBroadCastMessages: [],
+        currentBroadcast: null,
+        getLastBroadCast: false,
+        renderNewMessages: false,
+        currentBroadcastPolygons: null,
+        polygons: [],
+        polygonsCoords: [],
+        editModal: false,
+        editText: "",
+        messageToEdit: null,
+        renderEditedMessages: false,
+        polygonsToDelete: [],
+        selectedPolygon: null,
+        polygonsOnMap: [],
+        highlight: null,
+        renderDeletedMessage: false,
+        currentPoly: null,
+        doneDrawingPolys: [],
+        renderPolygons: true,
+        polygonInstances: null,
+        renderMapAgain: false,
+        errorMessage: null,
+        visible: false,
+        };
+  }
 
-    componentDidMount() {
-
-        API.getUserObj(this.props.user.id)
-          .then(user => {
-            const {broadcasts} = user
-
-            if (broadcasts.length > 0) {                  
-              const lastBrodcast = broadcasts[broadcasts.length - 1]
-
-              this.setState({
-                  currentBroadcast: lastBrodcast,
-                  newBroadCastMessages: lastBrodcast.messages,
-                  polygons: this.getGeoFencesFromBroadCast(lastBrodcast)
-              })
-            }    
+  componentDidMount() {
+    console.log("Component mounting")
+    API.getUserObj(this.props.user.id)
+      .then(user => {
+        const {broadcasts} = user
+        if (broadcasts.length > 0) {                  
+          const lastBrodcast = broadcasts[broadcasts.length - 1]
+          this.setState({
+            currentBroadcast: lastBrodcast,
+            newBroadCastMessages: lastBrodcast.messages,
+            polygons: this.getGeoFencesFromBroadCast(lastBrodcast)
           })
+        }    
+      })
+  }
 
-    }
-
-    getGeoFencesFromBroadCast = (broadcast) => {
-        // console.log("getGeoFencesFromBroadCast")
-        let geofenceArray = []
-        broadcast.messages.map(message => geofenceArray = [...geofenceArray, message.geofence])
-        // console.log("HELLO FROM GET GEOFENCES:", geofenceArray)
-        this.makePolygons(geofenceArray)
-      }
-
-    
-    makePolygons = (geofenceArray) => {
-        geofenceArray.map(geofence => {
-            const decodedGeofence = decodeGeoCode(geofence)
-            // console.log("DECODED GEO-FENCE:", decodedGeofence)
-            this.setState({
-            polygonsCoords: [...this.state.polygonsCoords, decodedGeofence]
-            })
-        })
-    }
-
-    setSelectedPolygon = (coords) => {
-
-        console.log('setSelectedPolygon', coords)
-        
-        this.state.newBroadCastMessages.map(message => {
-            const one = coords
-            const two = decodeGeoCode(message.geofence)
-            // console.log(two)
-            if (one[0]['lat'] === two[0]['latitude'] && one[0]['lng'] === two[0]['longitude']) {
-               this.setState({ highlight: message.id })
-               setTimeout(() => {
-                this.setState({ highlight: null })
-                }, 1000)
-            }
-        })
-
-
-    }
-
-
-    renderPolygonsOnMap = () => {
-        if (this.state.renderPolygons === false) {
-            this.setState({
-                renderPolygons: true
-            })
-        }
-
-        const formattedPolygons = this.state.polygonsCoords.map((poly, idx) => {
-            return poly.map(coord => 
-                { return { lat: coord.latitude, lng: coord.longitude } })
-        })
-        let polygonInstances = []
-      
-        formattedPolygons.map((coords, idx) =>       
-
-            // (   
-            //        <Polygon
-            //             onMouseOver={() => this.setSelectedPolygon(coords) }
-            //             path={coords}
-            //             key={idx}
-            //             options={{
-            //                 fillColor: "#000",
-            //                 fillOpacity: 0.4,
-            //                 strokeColor: "#4c75c2",
-            //                 strokeOpacity: 1,
-            //                 strokeWeight: 1,
-            //             }
-                       
-            //         } /> 
-            // )
-
-            (  
-              polygonInstances.push(   <Polygon
-                      onMouseOver={() => this.setSelectedPolygon(coords) }
-                      path={coords}
-                      key={idx}
-                      ref={React.createRef()}
-                      options={{
-                          fillColor: "#000",
-                          fillOpacity: 0.4,
-                          strokeColor: "#4c75c2",
-                          strokeOpacity: 1,
-                          strokeWeight: 1,
-                      }}
-                      {...this.props} /> 
-                )
-                
-            )
-      
-        )
-
-        console.log("renderPolygonsOnMap", polygonInstances)
-        console.log("renderPolygonsOnMap", polygonInstances.key)
-        this.setState({ polygonInstances: polygonInstances })
-        return polygonInstances
-    }
-
-
-    createNewBroadcast = () => {
-        this.setState({ showBroadcastModal: true })
-    }
+  getGeoFencesFromBroadCast = (broadcast) => {
+    // console.log("getGeoFencesFromBroadCast")
+    let geofenceArray = []
+    broadcast.messages.map(message => geofenceArray = [...geofenceArray, message.geofence])
+    // console.log("HELLO FROM GET GEOFENCES:", geofenceArray)
+    this.makePolygons(geofenceArray)
+  }
 
   
-	closeModalHandler = () => {
-		this.setState({
-            showModal: false,
-            showBroadcastModal: false
-        });
-        
-        if (this.state.visible) {
-            this.setState({
-                visible: !this.state.visible
-            })
-        }
-    }
-
-    doneDrawing = polygon => {        
-        console.log("DONE DRAWING:", polygon)
-        // drawingManager.setDrawingMode(null)
-        // if (this.state.polygon) {
-        //     this.state.polygon.setMap(null);
-        //   }
-
-        if (this.state.currentPoly) {
-            this.setState({ currentPoly: null })
-        }
-
-        // var vertices = polygon.getPath();
-        // var coords = []
-        // for (var i =0; i < vertices.getLength(); i++) {
-        //     var xy = vertices.getAt(i);
-        //     const lati = xy.lat()
-        //     const lngi = xy.lng()
-        //     coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
-        // }
-
-        this.setState({ polygonsToDelete : [...this.state.polygonsToDelete, polygon] })
-        this.setState({ polygon })
-        this.setState({ fence: polygon.getPath() })
-        this.setState({ showModal: true })
-        this.setState({ 
-            currentPoly: polygon, 
-            // polygonsCoords: [...this.state.polygonsCoords, coords],
-            // doneDrawingPolys: [...this.state.doneDrawingPolys, polygon],
-        })
-
-
-        // google.maps.event.addListener(polygon, "mouseover", () => {
-
-        //         var vertices = polygon.getPath();
-        //         var coords = []
-    
-        //         for (var i =0; i < vertices.getLength(); i++) {
-        //             var xy = vertices.getAt(i);
-        //             const lati = xy.lat()
-        //             const lngi = xy.lng()
-        //             coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
-
-        //         }
-        //         // debugger
-        //         this.setSelectedPolygon(coords)            
-
-        // })
-
-    }
-
-
-    handleChange = e => {
-        // console.log(e.target.value)
-        this.setState({ [e.target.name]: e.target.value })
-    }
-
-    handleBroadcastSubmit = () => {
- 
-    const broadcast = {
-            name: this.state.newBroadCastName,
-            code: this.state.newBroadCastCode.toLowerCase(),
-            broadcaster_id: this.props.user.id
-        }
-
-        API.newBroadCast(broadcast)
-            .then(broadcast => 
-                
-                {
-                    if (broadcast.error) {
-                        // console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
-                        this.setState({
-                            errorMessage: "Broadcast name already taken",
-                            newBroadCastName: "",
-                        })
-                    } else {
-                      console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
-                        this.setState({
-                            // renders map component and broadcast RHS column
-                            renderMap: true,
-                            showBroadcastModal: false,
-                            currentBroadcast: broadcast,
-                            newBroadCastName: "",
-                            newBroadCastCode: "",
-                        })           
-                    }
-         
-            })
-    }
-
-
-    handleMessageSubmit = e => {
-        // messageWithPolygon
-        // console.log("HANDLE MESSAGE SUBMIT", this.state.currentPoly)
-        const encodedFence = google.maps.geometry.encoding.encodePath(this.state.fence);
-        const broadcastMessage = {
-            message: this.state.messageText,
-            geofence: encodedFence,
-            broadcast_id: this.state.currentBroadcast.id
-        }
-
-        API.addMessage(broadcastMessage)
-            .then(message => this.setState({
-                messageText: "",
-                fence: null,
-                showModal: false,
-                renderNewMessages: true,
-                renderEditedMessages: false,
-                renderDeletedMessage: false,
-                newBroadCastMessages: [...this.state.newBroadCastMessages, message],
-                polygon: null,
-
-            })
-        
-        )
-
-        
-        google.maps.event.addListener(this.state.currentPoly, "mouseover", () => {
-
-            // console.log("INSIDE OF EVENT LISTENER", this.state.newBroadCastMessages)
-            const polygon = this.state.currentPoly
-
-            var vertices = polygon.getPath();
-            var coords = []
-
-            for (var i =0; i < vertices.getLength(); i++) {
-                var xy = vertices.getAt(i);
-                const lati = xy.lat()
-                const lngi = xy.lng()
-                coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
-            }
-            // debugger
-            this.setSelectedPolygon(coords)
-            
-        
+  makePolygons = (geofenceArray) => {
+    geofenceArray.map(geofence => {
+      const decodedGeofence = decodeGeoCode(geofence)
+      // console.log("DECODED GEO-FENCE:", decodedGeofence)
+      this.setState({
+      polygonsCoords: [...this.state.polygonsCoords, decodedGeofence]
+      })
     })
+  }
+
+  setSelectedPolygon = (coords) => {
+    this.state.newBroadCastMessages.map(message => {
+      const one = coords
+      const two = decodeGeoCode(message.geofence)
+      // console.log(two)
+      if (one[0]['lat'] === two[0]['latitude'] && one[0]['lng'] === two[0]['longitude']) {
+        this.setState({ highlight: message.id })
+        setTimeout(() => {
+        this.setState({ highlight: null })
+        }, 1000)
+      }
+    })
+  }
+
+
+  renderPolygonsOnMap = () => {
+  if (this.state.renderPolygons === false) {
+      this.setState({
+          renderPolygons: true
+      })
+  }
+
+  const formattedPolygons = this.state.polygonsCoords.map((poly, idx) => {
+      return poly.map(coord => 
+          { return { lat: coord.latitude, lng: coord.longitude } })
+  })
+  let polygonInstances = []
+
+  formattedPolygons.map((coords, idx) =>  (  
+    polygonInstances.push( <Polygon
+            onMouseOver={() => this.setSelectedPolygon(coords) }
+            path={coords}
+            key={idx}
+            ref={React.createRef()}
+            options={{
+                fillColor: "#000",
+                fillOpacity: 0.4,
+                strokeColor: "#4c75c2",
+                strokeOpacity: 1,
+                strokeWeight: 1,
+            }}
+            {...this.props} /> 
+      )      
+    )
+  )
+  this.setState({ polygonInstances: polygonInstances })
+  return polygonInstances
+  }
+
+  createNewBroadcast = () => {
+      this.setState({ showBroadcastModal: true })
+  }
+
+	closeModalHandler = () => {
+		this.setState({ showModal: false, showBroadcastModal: false });    
+    if (this.state.visible) {
+        this.setState({
+            visible: !this.state.visible
+        })
     }
+  }
+
+  doneDrawing = polygon => {        
+    console.log("DONE DRAWING:", polygon)
+    // drawingManager.setDrawingMode(null)
+    // if (this.state.polygon) {
+    //     this.state.polygon.setMap(null);
+    //   }
+
+    if (this.state.currentPoly) {
+        this.setState({ currentPoly: null })
+    }
+
+    // var vertices = polygon.getPath();
+    // var coords = []
+    // for (var i =0; i < vertices.getLength(); i++) {
+    //     var xy = vertices.getAt(i);
+    //     const lati = xy.lat()
+    //     const lngi = xy.lng()
+    //     coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+    // }
+
+    this.setState({ polygonsToDelete : [...this.state.polygonsToDelete, polygon] })
+    this.setState({ polygon })
+    this.setState({ fence: polygon.getPath() })
+    this.setState({ showModal: true })
+    this.setState({ 
+        currentPoly: polygon, 
+        // polygonsCoords: [...this.state.polygonsCoords, coords],
+        // doneDrawingPolys: [...this.state.doneDrawingPolys, polygon],
+    })
+
+
+      // google.maps.event.addListener(polygon, "mouseover", () => {
+
+      //         var vertices = polygon.getPath();
+      //         var coords = []
+  
+      //         for (var i =0; i < vertices.getLength(); i++) {
+      //             var xy = vertices.getAt(i);
+      //             const lati = xy.lat()
+      //             const lngi = xy.lng()
+      //             coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+
+      //         }
+      //         // debugger
+      //         this.setSelectedPolygon(coords)            
+
+      // })
+
+  }
+
+
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value })
+  }
+
+  handleBroadcastSubmit = () => {
+
+  const broadcast = {
+    name: this.state.newBroadCastName,
+    code: this.state.newBroadCastCode.toLowerCase(),
+    broadcaster_id: this.props.user.id
+  }
+
+  API.newBroadCast(broadcast)
+    .then(broadcast => {
+      if (broadcast.error) {
+          // console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
+          this.setState({
+              errorMessage: "Broadcast name already taken",
+              newBroadCastName: "",
+          })
+      } else {
+        console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
+          this.setState({
+              // renders map component and broadcast RHS column
+              renderMap: true,
+              showBroadcastModal: false,
+              currentBroadcast: broadcast,
+              newBroadCastName: "",
+              newBroadCastCode: "",
+          })           
+      }
+    })
+  }
+
+
+handleMessageSubmit = e => {
+  const encodedFence = google.maps.geometry.encoding.encodePath(this.state.fence);
+  const broadcastMessage = {
+    message: this.state.messageText,
+    geofence: encodedFence,
+    broadcast_id: this.state.currentBroadcast.id
+  }
+
+  API.addMessage(broadcastMessage)
+    .then(message => this.setState({
+        messageText: "",
+        fence: null,
+        showModal: false,
+        renderNewMessages: true,
+        renderEditedMessages: false,
+        renderDeletedMessage: false,
+        newBroadCastMessages: [...this.state.newBroadCastMessages, message],
+        polygon: null,
+    }))
+
+        
+  google.maps.event.addListener(this.state.currentPoly, "mouseover", () => {
+    // console.log("INSIDE OF EVENT LISTENER", this.state.newBroadCastMessages)
+    const polygon = this.state.currentPoly
+
+    var vertices = polygon.getPath();
+    var coords = []
+
+    for (var i =0; i < vertices.getLength(); i++) {
+        var xy = vertices.getAt(i);
+        const lati = xy.lat()
+        const lngi = xy.lng()
+        coords.push( { lat: parseFloat(lati.toFixed(6)), lng: parseFloat(lngi.toFixed(6)) } )
+    }
+    // debugger
+    this.setSelectedPolygon(coords)
+    })
+  }
 
     saveBroadcast = () => {
         API.saveBroadCast(this.state.currentBroadcast.id)
@@ -362,43 +311,6 @@ class DashBoard extends React.Component {
     }
 
     removeMessage = (message) => { 
-
-        // let mssg = decodeGeoCode(message.geofence)
-
-        // const formatedMsg = mssg.map(coord => {
-        //     return { lat: coord.latitude, lng: coord.longitude }
-        // })
-    
-
-        // console.log("FORMATTED", formatedMsg)
-
-        // this.state.polygonInstances.map(poly => {
-        //     console.log("sifgus", poly.props.path)
-        //     poly.props.path.map(coords => {
-        //         const one = coords
-        //         const two = formatedMsg
-
-        //         // console.log("ONE", one)
-        //         // console.log("1:", one[0]['lat'])
-        //         // console.log("2:", two[0]['lat'])
-        //         // console.log("3:", one[0]['lng'])
-        //         // console.log("4:", two[0]['lng'])
-        //         if (one['lat'] === two[0]['lat'] && one['lng'] === two[0]['lng']) {           
-        //             // poly.setMap(null)
-        //             // poly=null
-        //             // poly.props.options
-        //         console.log("Its working", poly.props.options.fillOpacity = 0)
-        //         console.log("Its working", poly)
-                
-                 
-        //     }
-        //     })
-
-        // })
- 
-
-        ///////
-
         console.log("REMOVE MESSAGE:", message)
         const msgs = this.state.newBroadCastMessages.filter(msg => msg.id !== message.id)
 
@@ -456,16 +368,6 @@ class DashBoard extends React.Component {
         
 
     render () {
-
-        // console.log("RENDER:", this.state.polygonsCoords)
-        // console.log(this.state.showBroadcastModal)
-        // console.log("RENDER:", this.state.newBroadCastMessages)
-        // console.log("EDITED MESSAGES?", this.state.renderEditedMessages)
-        // console.log("POLYGONS TO DELETE:", this.state.polygonsToDelete)
-        // console.log("selected polygon:", this.state.selectedPolygon)
-        // console.log("DONE DRAWING:", this.state.doneDrawingPolys)
-        
-
         const {user, userObject} = this.props
         const {renderPolygonsOnMap,
                 renderNewMessages,

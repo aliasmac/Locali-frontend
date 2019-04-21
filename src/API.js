@@ -73,10 +73,10 @@ class API {
         })
       }).then(resp => resp.json())
     }
-
+    
     static saveBroadCast (id) {
       return fetch(`http://localhost:3000/api/v1/broadcasts/${id}`, {
-        method: 'POST', 
+        method: 'PATCH', 
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           saved: true,
