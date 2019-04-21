@@ -7,16 +7,14 @@ body {
 .main {
   /* max-height: 40rem; */
   /* min-height: 50rem; */
-  background: #e9ebee;  
-  
+  background: #e9ebee;
 }
 
 .landing-nav {
   z-index: 1
 }
 
-.videoTag {
-  
+.videoTag {  
   width: 100%;
   height: 100%;
   /* background-size: cover;

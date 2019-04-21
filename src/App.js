@@ -32,7 +32,6 @@ class App extends Component {
 
 
   login = (user) => {
-    console.log("Hello from inside login in App.js", user.id)
     localStorage.setItem('token', user.token)
     this.setState({ user: user })
     API.getUserObj(this.state.user.id)
@@ -52,7 +51,6 @@ class App extends Component {
     if (!localStorage.getItem('token')) return
     API.validate()
       .then(user => {
-        console.log(user)
         this.login(user)
       })
       .catch(error => this.props.history.push('/'))
@@ -60,9 +58,6 @@ class App extends Component {
 
 
   render() {
-    // console.log("Hello from start of render in APP.js", this.state.userObject)
-
-    console.log(this.props.history.location.pathname)
     
     const {user, renderMap, userObject} = this.state
 
@@ -96,8 +91,7 @@ class App extends Component {
                 <video className='videoTag' autoPlay loop muted >
                   <source src={NycTraffic} type='video/mp4' />      
                 </video>
-              </div>
-              
+              </div>  
             </div>
             <footer>
                 <div className="copyright">

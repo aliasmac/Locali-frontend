@@ -1,8 +1,6 @@
 /* global google */
 import React from 'react'
-
-import { render } from 'react-dom';
-
+require('dotenv').config()
 
 import API from '../../API'
 import './DashBoard.css'
@@ -21,7 +19,7 @@ import decodeGeoCode from '../HelperFunctions/decodeGeoCode'
 const { DrawingManager } = require("react-google-maps/lib/components/drawing/DrawingManager")
 
 
-const googleMapURL = `https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyDXHHDfZvn2QHX42Uwacjmo1PuVfjBsjI8`;
+const googleMapURL = `https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=${GOOGLE_LOCALI_API_KEY}`;
 
 class DashBoard extends React.Component {
 
@@ -31,65 +29,63 @@ class DashBoard extends React.Component {
         super(props)
 
         this.state = {
-            center: {
-              // Flatiron School
-              lat: 51.520534,
-              lng: -0.087613
-            },
-            renderMap: false,
-            polygon: null,  // ?
-            fence: null,
-            watchID: null,
-            lastFetched: null,
-            showModal: false,
-            showBroadcastModal: false,
-            messageText: "",
-            newBroadCastName: "",
-            newBroadCastCode: "",
-            newBroadCastMessages: [],
-            currentBroadcast: null,
-            getLastBroadCast: false,
-            renderNewMessages: false,
-            currentBroadcastPolygons: null,
-            polygons: [],
-            polygonsCoords: [],
-            editModal: false,
-            editText: "",
-            messageToEdit: null,
-            renderEditedMessages: false,
-            polygonsToDelete: [],
-            selectedPolygon: null,
-            polygonsOnMap: [],
-            highlight: null,
-            renderDeletedMessage: false,
-            currentPoly: null,
-            doneDrawingPolys: [],
-            renderPolygons: true,
-            polygonInstances: null,
-            renderMapAgain: false,
-            errorMessage: null,
-            visible: false,
-
+          center: {
+            // Flatiron School
+            lat: 51.520534,
+            lng: -0.087613
+          },
+          renderMap: false,
+          polygon: null,  // ?
+          fence: null,
+          watchID: null,
+          lastFetched: null,
+          showModal: false,
+          showBroadcastModal: false,
+          messageText: "",
+          newBroadCastName: "",
+          newBroadCastCode: "",
+          newBroadCastMessages: [],
+          currentBroadcast: null,
+          getLastBroadCast: false,
+          renderNewMessages: false,
+          currentBroadcastPolygons: null,
+          polygons: [],
+          polygonsCoords: [],
+          editModal: false,
+          editText: "",
+          messageToEdit: null,
+          renderEditedMessages: false,
+          polygonsToDelete: [],
+          selectedPolygon: null,
+          polygonsOnMap: [],
+          highlight: null,
+          renderDeletedMessage: false,
+          currentPoly: null,
+          doneDrawingPolys: [],
+          renderPolygons: true,
+          polygonInstances: null,
+          renderMapAgain: false,
+          errorMessage: null,
+          visible: false,
           };
     }
 
     componentDidMount() {
 
         API.getUserObj(this.props.user.id)
-                .then(user => {
-                    const {broadcasts} = user
+          .then(user => {
+            const {broadcasts} = user
 
-                    if (broadcasts.length > 0) {                  
-                        const lastBrodcast = broadcasts[broadcasts.length - 1]
-        
-                        this.setState({
-                            currentBroadcast: lastBrodcast,
-                            newBroadCastMessages: lastBrodcast.messages,
-                            polygons: this.getGeoFencesFromBroadCast(lastBrodcast)
-                        })
-                    }    
-        
-            })
+            if (broadcasts.length > 0) {                  
+              const lastBrodcast = broadcasts[broadcasts.length - 1]
+
+              this.setState({
+                  currentBroadcast: lastBrodcast,
+                  newBroadCastMessages: lastBrodcast.messages,
+                  polygons: this.getGeoFencesFromBroadCast(lastBrodcast)
+              })
+            }    
+          })
 
     }
 
@@ -164,19 +160,19 @@ class DashBoard extends React.Component {
             // )
 
             (  
-                    polygonInstances.push(   <Polygon
-                            onMouseOver={() => this.setSelectedPolygon(coords) }
-                            path={coords}
-                            key={idx}
-                            ref={React.createRef()}
-                            options={{
-                                fillColor: "#000",
-                                fillOpacity: 0.4,
-                                strokeColor: "#4c75c2",
-                                strokeOpacity: 1,
-                                strokeWeight: 1,
-                            }}
-                            {...this.props} /> 
+              polygonInstances.push(   <Polygon
+                      onMouseOver={() => this.setSelectedPolygon(coords) }
+                      path={coords}
+                      key={idx}
+                      ref={React.createRef()}
+                      options={{
+                          fillColor: "#000",
+                          fillOpacity: 0.4,
+                          strokeColor: "#4c75c2",
+                          strokeOpacity: 1,
+                          strokeWeight: 1,
+                      }}
+                      {...this.props} /> 
                 )
                 
             )
@@ -252,16 +248,11 @@ class DashBoard extends React.Component {
 
         //         }
         //         // debugger
-        //         this.setSelectedPolygon(coords)
-                
+        //         this.setSelectedPolygon(coords)            
 
         // })
 
     }
-
-    // <b>Bermuda Triangle polygon</b><br>Clicked location: <br>51.522883837825944,-0.08266667130044425<br><br>Coordinate 0:<br>51.5222429849892,-0.08258084061196769<br>Coordinate 1:<br>51.52154871757213,-0.0804779887442919<br>Coordinate 2:<br>51.52387180161335,-0.08103588821938956<br>Coordinate 3:<br>51.522883837825944,-0.08266667130044425
-
-
 
 
     handleChange = e => {
@@ -282,12 +273,13 @@ class DashBoard extends React.Component {
                 
                 {
                     if (broadcast.error) {
-                        console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
+                        // console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
                         this.setState({
                             errorMessage: "Broadcast name already taken",
                             newBroadCastName: "",
                         })
                     } else {
+                      console.log("HELLO FROM HANDLE BROADCAST SUBMIT:", broadcast)
                         this.setState({
                             // renders map component and broadcast RHS column
                             renderMap: true,
@@ -347,12 +339,6 @@ class DashBoard extends React.Component {
             
         
     })
-
-        // this.setState({
-        //     messageText: "",
-        //     fence: null,
-        //     showModal: false,
-        // })
     }
 
     saveBroadcast = () => {
@@ -424,13 +410,6 @@ class DashBoard extends React.Component {
         })
 
         API.removeMessage(message.id)
-      
-
-
-        /////////////////////
-
-        
-
     }
 
     editMessage = (message) => {
@@ -453,8 +432,8 @@ class DashBoard extends React.Component {
         const messages = this.state.newBroadCastMessages
         const idx = messages.findIndex(msg => msg.id === this.state.messageToEdit.id);
         API.editMessage(this.state.editText, this.state.messageToEdit.id)
-            .then(message => 
-
+            .then(message => {
+              console.log("MESSAGE EDIT", message)
                 this.setState({
                     newBroadCastMessages: [...messages.slice(0, idx), message, ...messages.slice(idx + 1)],
                     editModal: false,
@@ -464,7 +443,7 @@ class DashBoard extends React.Component {
                     renderNewMessages: false,
                     renderDeletedMessage: false,
                 })
-                
+              }  
         )
 
     }

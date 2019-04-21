@@ -1,17 +1,19 @@
 
 class API {
     static init () {
-      this.baseUrl = 'http://localhost:3000'
-      this.loginUrl = this.baseUrl + '/api/v1/login'
-      this.signupUrl = this.baseUrl + '/api/v1/users'
-      this.validateUrl = this.baseUrl + '/api/v1/validate'
-      this.broadcastsUrl = this.baseUrl + '/api/v1/broadcasts'
+      this.baseUrl = 'http://localhost:3000/api/v1'
+      this.loginUrl = this.baseUrl + '/login'
+      this.signupUrl = this.baseUrl + '/users'
+      this.validateUrl = this.baseUrl + '/validate'
+      this.broadcastsUrl = this.baseUrl + '/broadcasts'
     }
 
+    // http://localhost:3000/api/v1
+    // https://locali-communications.herokuapp.com/api/v1
 
     static signup (username, password) {
       console.log(username)
-        return fetch('http://localhost:3000/api/v1/users', {
+        return fetch(this.signupUrl, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -23,8 +25,7 @@ class API {
 
     
     static login (obj) {
-    console.log("HELLO FROM LOGIN IN API.js", obj)
-      return fetch('http://localhost:3000/api/v1/login', {
+      return fetch(this.loginUrl, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -36,10 +37,8 @@ class API {
 
 
     static validate () {
-    console.log("Hello from inside API.validate") 
       const token = localStorage.getItem('token')
-      console.log("TOKEN", token)
-      return fetch('http://localhost:3000/api/v1/validate', {
+      return fetch(this.validateUrl, {
         headers: {'Authorization': token}
       }).then(resp => resp.json())
     }
@@ -47,13 +46,6 @@ class API {
     static getUserObj (id) {
       return fetch(`http://localhost:3000/api/v1/users/${id}`)
         .then(resp => resp.json())
-    }
-
-  
-    static getUserBroadcasts () {
-      return fetch('http://localhost:3000/items', {
-        headers: { 'Authorization': localStorage.token }
-      }).then(resp => resp.json())
     }
 
 
@@ -92,11 +84,6 @@ class API {
       })
     }
 
-    static getLastbroadcast () {
-      return fetch(`http://localhost:3000/api/v1/lastbroadcast`)
-        .then(resp => resp.json())
-    }
-
     static deleteBroadcast (id) {
       return fetch(`http://localhost:3000/api/v1/broadcasts/${id}`, {
         method: 'DELETE',
@@ -121,7 +108,8 @@ class API {
 
   }
 
-  
+  API.init()
+
   export default API
 
  
